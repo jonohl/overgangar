@@ -73,7 +73,6 @@
   .cmp-mode button.active{background:var(--ink);color:#fff}
   .cmp-mode-hint{font-size:12px;color:var(--ink-soft);font-style:italic;max-width:42ch;line-height:1.45}
   @media(max-width:620px){ .cmp-mode-hint{flex-basis:100%} }
-  .ts-section{margin-top:34px;padding-top:24px;border-top:2px solid var(--ink)}
   .ts-controls{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:0 0 16px}
   .ts-controls .btn{width:auto;padding:10px 16px;font-size:13px;white-space:nowrap}
   .ts-body{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
@@ -86,7 +85,14 @@
     background:#fff;border-radius:5px;cursor:pointer;color:var(--ink)}
   .ts-pick-tools button:hover{background:var(--accent-soft);color:var(--accent)}
   .ts-chart-wrap{flex:1 1 420px;min-width:300px;min-height:420px;position:relative}
-  .cmp-hint{font-size:13px;color:var(--ink-soft)}
+  .pat-row{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;margin:4px 0 18px}
+  .pat-text{flex:1 1 340px;min-width:280px}
+  .pat-text p{margin:0 0 8px}
+  .pat-chart{flex:0 1 400px;min-width:300px}
+  .pat-svg{width:100%;height:auto;display:block}
+  .pat-lbl{font:600 11px/1 system-ui,sans-serif;fill:var(--ink-soft)}
+  .pat-val{font:700 11px/1 ui-monospace,Menlo,Consolas,monospace;fill:var(--ink)}
+  .pat-note{font-size:12px;color:var(--ink-soft);margin:4px 0 0}
   .cmp-table-wrap{overflow:auto;max-width:100%;max-height:78vh}
   table.cmp{border-collapse:separate;border-spacing:0;font-size:13px;width:100%}
   table.cmp th,table.cmp td{padding:7px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
@@ -454,6 +460,7 @@
     <button class="viewnav-btn" data-vw="profile" role="tab" aria-selected="false">Regionprofiler</button>
     <button class="viewnav-btn" data-vw="compare" role="tab" aria-selected="false">Jämför län</button>
     <button class="viewnav-btn" data-vw="correlate" role="tab" aria-selected="false">Sambandsanalys</button>
+    <button class="viewnav-btn" data-vw="patterns" role="tab" aria-selected="false">Automatisk analys</button>
     <button class="viewnav-btn" data-vw="method" role="tab" aria-selected="false">Om data och metod</button>
   </nav>
   <p class="src">Källa: SCB · PxWeb API v1 · CC0</p>
@@ -661,6 +668,35 @@
 </main>
 
 <!-- ===================== Om data och metod ===================== -->
+<main id="view-patterns" class="view" style="display:none">
+  <section class="results" style="grid-column:1/-1">
+    <h3 class="prof-h" style="margin-top:0">Automatisk analys
+      <button class="info-btn" aria-label="Mer information om vyn" data-info="Analysen korrelerar övergångsandelen för varje utbildningsform mot regionernas arbetsmarknadsvariabler och lyfter automatiskt fram de starkaste mönstren, inklusive kontraster mellan utbildningsformer. Samvariation är inte orsakssamband.">i</button>
+    </h3>
+    <p class="prof-sub">Vilka arbetsmarknadsvariabler samvarierar med övergången till olika former av högre utbildning? Analysen körs live mot SCB:s API och texterna genereras automatiskt ur resultaten.</p>
+    <div class="ts-controls">
+      <label class="cmp-form-label">Regionnivå
+        <select id="patLevel" class="corr-select">
+          <option value="lan" selected>Län (21 — snabbt)</option>
+          <option value="kommun">Kommuner (290 — grundligare, tar längre tid)</option>
+        </select>
+      </label>
+      <label class="cmp-form-label">Uppföljningstid
+        <select id="patHorizon" class="corr-select">
+          <option value="a1">Inom 1 år</option>
+          <option value="a3" selected>Inom 3 år</option>
+          <option value="a5">Inom 5 år</option>
+        </select>
+      </label>
+      <button class="btn" id="patRun">Kör analys</button>
+      <button class="btn ghost" id="patExport" disabled>Exportera CSV</button>
+    </div>
+    <div id="patternsOut">
+      <div class="placeholder">Välj nivå och uppföljningstid och klicka "Kör analys". Analysen hämtar övergångar för samtliga utbildningsformer och alla arbetsmarknadsmått, korrelerar dem och sammanfattar mönstren i text.</div>
+    </div>
+  </section>
+</main>
+
 <main id="view-method" class="view" style="display:none">
   <section class="results" style="grid-column:1/-1">
     <div class="method-doc">
@@ -674,11 +710,12 @@
         <a href="#m-arbetsmarknad">Arbetsmarknadsmått</a>
         <a href="#m-ekonomi">Ekonomiska mått</a>
         <a href="#m-berakning">Beräkningar och jämförelser</a>
+        <a href="#m-monster">Automatisk analys</a>
         <a href="#m-begransningar">Begränsningar och tolkning</a>
       </nav>
 
       <h3 id="m-oversikt" class="method-h">Översikt</h3>
-      <p>Appen visar övergångar från gymnasieskola till eftergymnasiala utbildningar tillsammans med mått som beskriver regionens arbetsmarknad och ekonomi. Data hämtas från SCB:s API per region (riket, län eller kommun) och presenteras i fyra analysvyer: <b>Hämta tabeller</b> (fri tabellfråga mot övergångstabellen), <b>Regionprofiler</b> (en regions samtliga mått med jämförelse mot övriga och mot riket), <b>Jämför län</b> (alla län sida vid sida, antingen som en matris över samtliga mått ett valt år eller som utveckling över tid för valda län) och <b>Sambandsanalys</b> (två mått mot varandra i ett spridningsdiagram).</p>
+      <p>Appen visar övergångar från gymnasieskola till eftergymnasiala utbildningar tillsammans med mått som beskriver regionens arbetsmarknad och ekonomi. Data hämtas från SCB:s API per region (riket, län eller kommun) och presenteras i fem analysvyer: <b>Hämta tabeller</b> (fri tabellfråga mot övergångstabellen), <b>Regionprofiler</b> (en regions samtliga mått med jämförelse mot övriga och mot riket), <b>Jämför län</b> (alla län sida vid sida, antingen som en matris över samtliga mått ett valt år eller som utveckling över tid för valda län), <b>Sambandsanalys</b> (två mått mot varandra i ett spridningsdiagram) och <b>Automatisk analys</b> (korrelationsgenomgång av alla utbildningsformer mot alla arbetsmarknadsvariabler, med genererade textsammanfattningar).</p>
       <p>Regionkoder följer SCB:s standard: tvåsiffrig kod för län (t.ex. 01 Stockholm), fyrsiffrig för kommun (t.ex. 0180 Stockholm), och 00 för riket. Statistiken är nettoräknad och avrundad av sekretesskäl, vilket innebär att delsummor inte alltid summerar exakt till totaler.</p>
 
       <h3 id="m-overgangar" class="method-h">Övergångar till vidare studier</h3>
@@ -731,6 +768,12 @@
       <p><b>Utveckling över tid.</b> Jämför län har utöver matrisen ett läge som ritar övergången per län som linjer över avgångsåren, för en vald utbildningsform och uppföljningstid (1, 3, 5 eller 10 år). Man väljer själv vilka län som ska visas. Y-axeln är fast 0–100 % så att länen kan jämföras rättvist.</p>
       <p><b>Korrelation.</b> I Sambandsanalysen visas Pearsons korrelationskoefficient (r) och förklaringsgraden (r², andelen av variationen i y som statistiskt följer x), tillsammans med en linjär regressionslinje (minsta kvadratmetoden). Ett samband kräver minst tre datapunkter och visas bara för år där båda måtten har data för minst fem regioner.</p>
       <p><b>Andelar ur antal.</b> För utbildningsnivå, högskoleförberedande gymnasieprogram, jobb som kräver högskoleutbildning och tjänstesektorn ger SCB bara antal, varför appen själv beräknar andelarna enligt beskrivningarna ovan. Övriga andelsmått (övergångar, sysselsättning, arbetslöshet) hämtas som färdiga värden, liksom BRP per invånare.</p>
+
+      <h3 id="m-monster" class="method-h">Automatisk analys</h3>
+      <p>Den automatiska analysen besvarar frågan "vilka arbetsmarknadsvariabler samvarierar med övergången till olika utbildningsformer?" automatiskt. För varje utbildningsform (högskola, yrkeshögskola, folkhögskola, konst/kultur samt totalen) beräknas Pearsons korrelationskoefficient mot var och en av arbetsmarknadsvariablerna, tvärs över regionerna. Antal studerande ingår inte (absoluta antal speglar befolkningsstorlek och ger skenbara samband), och BRP utgår på kommunnivå.</p>
+      <p><b>Statistisk prövning.</b> Varje korrelation t-testas mot nollhypotesen r = 0 på 5 %-nivån (tvåsidigt). Endast säkerställda samband lyfts i texterna; alla korrelationer visas i diagrammen, där icke säkerställda staplar är bleka och märkta med °. Observera att antalet test är stort: på 5 %-nivån förväntas ungefär vart tjugonde test peka ut ett samband av ren slump, vilket analysen själv redovisar.</p>
+      <p><b>Årtal.</b> Övergångarna avser senaste avgångsår med tillräckligt underlag och arbetsmarknadsmåtten senaste tillgängliga år; åren kan därför skilja sig något åt mellan måtten. Det är en medveten avvägning — nivåvariabler som utbildningsnivå och näringsstruktur är trögrörliga — men innebär att analysen inte är ett exakt samtidigt tvärsnitt.</p>
+      <p><b>Tolkning.</b> Korrelationerna mäter samvariation i ett tvärsnitt, inte orsakssamband. Ett starkt samband kan bero på bakomliggande faktorer (storstad/landsbygd är den klassiska), och på länsnivå (21 observationer) kan enstaka avvikande län driva resultatet. Kommunnivån ger fler observationer men osäkrare enskilda värden. Textsnuttarna genereras maskinellt ur siffrorna enligt fasta mallar och ersätter inte en analytikers bedömning.</p>
 
       <h3 id="m-begransningar" class="method-h">Begränsningar och tolkning</h3>
       <p><b>Samband är inte orsak.</b> Spridningsdiagrammen och korrelationerna visar statistiska samband, inte orsakssamband. Bakomliggande faktorer kan förklara mönster, och ett starkt samband innebär inte att den ena variabeln påverkar den andra.</p>
@@ -1306,6 +1349,7 @@ function onViewActivated(vw){
   if(vw==="profile") initProfileView();
   else if(vw==="correlate") initCorrelateView();
   else if(vw==="compare") initCompareView();
+  else if(vw==="patterns") initCompareView();   // återanvänder regionlistans laddning
 }
 
 // ---- Info-ikoner: kort kontexttext + länk till metodfliken ----
@@ -3399,6 +3443,199 @@ function renderCompare(){
 }
 let _cmpTip=null;
 function cmpHideTip(){ if(_cmpTip){ _cmpTip.remove(); _cmpTip=null; } }
+
+/* ================= Automatisk analys =================
+   Korrelerar övergångsandel per utbildningsform mot arbetsmarknadsvariabler
+   tvärs över regioner. Live-hämtning, automatisk textgenerering. */
+const PAT_METRICS = [
+  {key:"b:sysselsattningsgrad", short:"sysselsättningsgraden",            noun:"hög sysselsättning"},
+  {key:"b:arbetsloshet",        short:"arbetslösheten",                    noun:"hög arbetslöshet"},
+  {key:"m:utb",                 short:"utbildningsnivån",                  noun:"hög utbildningsnivå"},
+  {key:"m:hog",                 short:"andelen jobb som kräver högskoleutbildning", noun:"många högskolejobb"},
+  {key:"m:hogforb",             short:"andelen högskoleförberedande examinerade",   noun:"hög andel högskoleförberedande"},
+  {key:"m:brp",                 short:"BRP per invånare",                  noun:"hög BRP"},
+  {key:"m:tjanst",              short:"tjänstesektorns andel",             noun:"stor tjänstesektor"}
+];
+const PAT_FORMS = [
+  {key:"hogskola", label:"Högskola"},
+  {key:"yrkesh",   label:"Yrkeshögskola"},
+  {key:"folkh",    label:"Folkhögskola"},
+  {key:"konst",    label:"Konst- och kulturutbildningar"},
+  {key:"total",    label:"Samtliga eftergymnasiala"}
+];
+// kritiskt t-värde (tvåsidigt, 5 %-nivå), approximation god för df>=10
+const tCrit = df => 1.96 + 2.4/df;
+
+// Senaste år i {region:{år:värde}} där minst minN regioner har värde
+function latestYearWithData(byRegion, minN, valueFn){
+  const counts={};
+  Object.keys(byRegion||{}).forEach(rc=>{
+    Object.keys(byRegion[rc]||{}).forEach(yr=>{
+      const v = valueFn ? valueFn(byRegion[rc][yr]) : byRegion[rc][yr];
+      if(typeof v==="number" && !isNaN(v)) counts[yr]=(counts[yr]||0)+1;
+    });
+  });
+  const yrs=Object.keys(counts).filter(y=>counts[y]>=minN).sort();
+  return yrs.length ? yrs[yrs.length-1] : null;
+}
+
+let PAT_RESULT=null;
+$("#patRun").addEventListener("click", runPatterns);
+async function runPatterns(){
+  const btn=$("#patRun"); btn.disabled=true;
+  try{ await _runPatternsInner(); } finally{ btn.disabled=false; }
+}
+async function _runPatternsInner(){
+  const level=$("#patLevel").value, horizon=$("#patHorizon").value;
+  const out=$("#patternsOut");
+  const codes = level==="lan"
+    ? profileRegions.filter(r=>/^\d{2}$/.test(r.code) && r.code!=="00").map(r=>r.code)
+    : profileRegions.filter(r=>/^\d{4}$/.test(r.code)).map(r=>r.code);
+  if(!codes.length){ out.innerHTML=`<div class="msg err">Regionlistan är inte laddad ännu, försök igen om en stund.</div>`; return; }
+  const minN = level==="lan" ? 10 : 50;
+  const metrics = PAT_METRICS.filter(m=>!(level==="kommun" && m.key==="m:brp"));
+  out.innerHTML = `<div class="msg"><div class="spinner"></div>Startar analysen…</div>`;
+  try{
+    const metricData={};
+    // Sekventiellt, inte parallellt: två av måtten batchar internt många anrop
+    // (utbildningsnivå, yrke) och parallell körning skulle överskrida SCB:s
+    // rate-limit på kommunnivå. Sekventiellt + intern paus håller takten laglig.
+    for(let i=0;i<metrics.length;i++){
+      out.innerHTML = `<div class="msg"><div class="spinner"></div>Hämtar arbetsmarknadsmått ${i+1}/${metrics.length} (${patBarLabel(metrics[i].key).toLowerCase()})…${level==="kommun"?" Kommunnivån hämtar mycket data och kan ta uppåt en minut.":""}</div>`;
+      metricData[metrics[i].key] = await fetchMetricAllLan(metrics[i].key, codes, level).catch(()=>({}));
+    }
+    out.innerHTML = `<div class="msg"><div class="spinner"></div>Hämtar övergångar per utbildningsform…</div>`;
+    const formData={};
+    await Promise.all(PAT_FORMS.map(async f=>{ formData[f.key]=await fetchTransitionsMulti({basRegions:codes, sex:"1+2", form:f.key}).catch(()=>({})); }));
+    // korrelationer
+    const cells=[];   // {form, metric, r, n, sig, t, transYear, metricYear}
+    PAT_FORMS.forEach(f=>{
+      const tr=formData[f.key];
+      const transYear = latestYearWithData(tr, minN, o=>o?.[horizon]);
+      metrics.forEach(m=>{
+        const md=metricData[m.key];
+        const metricYear = latestYearWithData(md, minN, null);
+        let r=null,n=0,t=null,sig=false;
+        if(transYear && metricYear){
+          const pts=[];
+          codes.forEach(c=>{
+            const y=tr?.[c]?.[transYear]?.[horizon];
+            const x=md?.[c]?.[metricYear];
+            if(typeof x==="number"&&!isNaN(x)&&typeof y==="number"&&!isNaN(y)) pts.push({x,y});
+          });
+          n=pts.length;
+          if(n>=minN){
+            r=pearson(pts);
+            if(r!=null && Math.abs(r)<1){
+              t=r*Math.sqrt((n-2)/(1-r*r));
+              sig=Math.abs(t)>tCrit(n-2);
+            }
+          } else r=null;
+        }
+        cells.push({form:f.key, metric:m.key, r, n, t, sig, transYear, metricYear});
+      });
+    });
+    PAT_RESULT={cells, level, horizon, metrics, nTests:cells.filter(c=>c.r!=null).length};
+    renderPatterns();
+    $("#patExport").disabled=false;
+  }catch(err){
+    out.innerHTML=`<div class="msg err"><strong>Analysen kunde inte genomföras.</strong><code>${err.message.replace(/</g,"&lt;")}</code></div>`;
+  }
+}
+
+const patMetricShort = key => (PAT_METRICS.find(m=>m.key===key)||{}).short || key;
+const patFormLabel  = key => (PAT_FORMS.find(f=>f.key===key)||{}).label || key;
+const fmtR = r => (r>=0?"+":"−") + Math.abs(r).toFixed(2).replace(".",",");
+
+function patSentence(formLabel, cell, positive){
+  const mShort = patMetricShort(cell.metric);
+  const styrka = Math.abs(cell.r)>=0.7 ? "starkt" : Math.abs(cell.r)>=0.5 ? "tydligt" : "måttligt";
+  return positive
+    ? `Övergången till ${formLabel.toLowerCase()} samvarierar ${styrka} positivt med ${mShort} (r = ${fmtR(cell.r)}): regioner med högre värden har i genomsnitt högre övergång.`
+    : `Övergången till ${formLabel.toLowerCase()} samvarierar ${styrka} negativt med ${mShort} (r = ${fmtR(cell.r)}): regioner med högre värden har i genomsnitt lägre övergång.`;
+}
+
+function renderPatterns(){
+  const {cells, level, horizon, metrics, nTests}=PAT_RESULT;
+  const horizonTxt={a1:"inom 1 år",a3:"inom 3 år",a5:"inom 5 år"}[horizon];
+  const lvlTxt = level==="lan" ? "21 län" : "Sveriges kommuner";
+  let html = "";
+
+  // --- per form: text + divergerande staplar ---
+  PAT_FORMS.forEach(f=>{
+    const fc = cells.filter(c=>c.form===f.key && c.r!=null).sort((a,b)=>Math.abs(b.r)-Math.abs(a.r));
+    if(!fc.length){
+      html+=`<h3 class="prof-h">${f.label}</h3><p>Otillräckligt dataunderlag för analys.</p>`;
+      return;
+    }
+    const sig = fc.filter(c=>c.sig);
+    const topPos = sig.find(c=>c.r>0), topNeg = sig.find(c=>c.r<0);
+    let text="";
+    if(topPos) text += patSentence(f.label, topPos, true)+" ";
+    if(topNeg) text += patSentence(f.label, topNeg, false)+" ";
+    if(!sig.length) text = `Inga statistiskt säkerställda samband (5 %-nivån) mellan övergången till ${f.label.toLowerCase()} och arbetsmarknadsvariablerna i underlaget — i sig ett resultat: variationen mellan regionerna förklaras inte av dessa mått.`;
+    else if(sig.length>2) text += `Ytterligare ${sig.length-2===1?"ett säkerställt samband":sig.length-2+" säkerställda samband"} syns i diagrammet.`;
+    const yrNote = fc[0] ? `Övergångar avgångsår ${fc[0].transYear}, arbetsmarknadsmått ${[...new Set(fc.map(c=>c.metricYear))].join("/")}` : "";
+    html+=`<h3 class="prof-h">${f.label}</h3>
+      <div class="pat-row">
+        <div class="pat-text"><p>${text}</p><p class="pat-note">${yrNote} · n = ${fc[0].n}</p></div>
+        <div class="pat-chart">${patBars(fc)}</div>
+      </div>`;
+  });
+
+  // --- kontraster mellan former ---
+  const contrasts=[];
+  metrics.forEach(m=>{
+    const sigCells = cells.filter(c=>c.metric===m.key && c.sig && c.form!=="total");
+    const pos=sigCells.filter(c=>c.r>0), neg=sigCells.filter(c=>c.r<0);
+    if(pos.length && neg.length){
+      contrasts.push(`<b>${patMetricShort(m.key).charAt(0).toUpperCase()+patMetricShort(m.key).slice(1)}</b> drar åt olika håll: positivt samband med ${pos.map(c=>patFormLabel(c.form).toLowerCase()).join(" och ")} (${pos.map(c=>"r = "+fmtR(c.r)).join(", ")}) men negativt med ${neg.map(c=>patFormLabel(c.form).toLowerCase()).join(" och ")} (${neg.map(c=>"r = "+fmtR(c.r)).join(", ")}). Utbildningsformerna tycks alltså rekrytera ur olika regionala miljöer.`);
+    }
+  });
+  if(contrasts.length){
+    html+=`<h3 class="prof-h">Kontraster mellan utbildningsformer</h3>`+contrasts.map(c=>`<p>${c}</p>`).join("");
+  }
+
+  // --- metodnot ---
+  const expFalse = Math.round(nTests*0.05*10)/10;
+  html+=`<p class="corr-disclaimer"><b>Läs resultaten varsamt.</b> Analysen avser ${lvlTxt}, övergång ${horizonTxt}, och mäter samvariation (Pearsons r) i ett tvärsnitt — inte orsakssamband. Arbetsmarknadsmåtten avser senaste tillgängliga år, övergångarna senaste avgångsår med tillräckligt underlag; åren skiljer sig därför något åt mellan måtten. "Säkerställt" avser 5 %-nivån; med ${nTests} test förväntas ändå omkring ${String(expFalse).replace(".",",")} skenbart säkerställda samband av ren slump. Utbildningsformerna överlappar (samma person kan ingå i flera). ${level==="lan"?"Med endast 21 län är underlaget litet — enstaka avvikande län kan driva ett samband. Kör gärna kommunnivån som kontroll.":"Kommunnivån ger fler observationer men små kommuners andelar är osäkra (få examinerade, avrundade antal)."}</p>`;
+
+  $("#patternsOut").innerHTML=html;
+}
+
+// Divergerande horisontella staplar över r per variabel
+function patBars(fc){
+  const W=380, rowH=26, padL=150, padR=36;
+  const H=fc.length*rowH+8;
+  const x0=padL+(W-padL-padR)/2, half=(W-padL-padR)/2;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" class="pat-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Korrelationer per variabel">`;
+  svg+=`<line x1="${x0}" y1="0" x2="${x0}" y2="${H-4}" stroke="#c9bda6" stroke-width="1"/>`;
+  fc.forEach((c,i)=>{
+    const y=i*rowH+5, bw=Math.abs(c.r)*half;
+    const x=c.r>=0 ? x0 : x0-bw;
+    const col=c.r>=0 ? "#1f6f54" : "#c84b31";
+    svg+=`<text x="${padL-6}" y="${y+12}" text-anchor="end" class="pat-lbl">${patBarLabel(c.metric)}</text>`;
+    svg+=`<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(bw,1).toFixed(1)}" height="16" rx="2" fill="${col}" opacity="${c.sig?1:.32}"/>`;
+    svg+=`<text x="${(c.r>=0?x0+bw+4:x0-bw-4).toFixed(1)}" y="${y+12}" text-anchor="${c.r>=0?"start":"end"}" class="pat-val">${fmtR(c.r)}${c.sig?"":" °"}</text>`;
+  });
+  svg+=`</svg>`;
+  return svg+`<p class="pat-note">Gröna staplar = positivt samband, röda = negativt. Bleka staplar med ° är inte statistiskt säkerställda.</p>`;
+}
+const PAT_BAR_LABELS={"b:sysselsattningsgrad":"Sysselsättning","b:arbetsloshet":"Arbetslöshet","m:utb":"Utbildningsnivå","m:hog":"Högskolejobb","m:hogforb":"Högskoleförb. gym.","m:brp":"BRP/invånare","m:tjanst":"Tjänstesektor"};
+const patBarLabel = key => PAT_BAR_LABELS[key]||key;
+
+$("#patExport").addEventListener("click",()=>{
+  if(!PAT_RESULT) return;
+  const {cells}=PAT_RESULT;
+  const rows=[["Utbildningsform","Variabel","r","n","t","Säkerställt (5 %)","Avgångsår","Måttår"]];
+  cells.filter(c=>c.r!=null).forEach(c=>{
+    rows.push([patFormLabel(c.form), patBarLabel(c.metric),
+      String(Math.round(c.r*1000)/1000).replace(".",","), c.n,
+      c.t==null?"":String(Math.round(c.t*100)/100).replace(".",","),
+      c.sig?"ja":"nej", c.transYear, c.metricYear]);
+  });
+  downloadCSV(rows, `scb_monsteranalys_${PAT_RESULT.level}_${PAT_RESULT.horizon}.csv`);
+});
 
 // Vid fönsterändring: ompröva om matrisen behöver inre scroll eller kan
 // ligga fri (rubrikerna fastnar då mot sidans överkant). Lätt debounce.
