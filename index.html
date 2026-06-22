@@ -407,6 +407,8 @@
   .corr-head h2{letter-spacing:-.01em}
   .corr-head b{color:var(--accent)}
   .corr-disclaimer{font-size:12px;color:var(--ink-soft);font-style:italic;margin:12px 0 0;max-width:70ch}
+  .corr-fewwarn{margin:10px 0 0;padding:9px 13px;border-radius:11px;font-size:12.5px;line-height:1.45;
+    color:#8a3d12;background:rgba(214,118,46,.1);border:1px solid rgba(214,118,46,.32);max-width:74ch}
   /* Disclaimern under Jämför län-matrisen går full bredd i stället för att
      begränsas till läsbredd, så den radbryter mot sidans högerkant. */
   .cmp-disclaimer{max-width:none}
@@ -857,6 +859,11 @@
     animation:glassSheen 5s ease-in-out 1.4s infinite;
     pointer-events:none;
   }
+  /* Stående variant: tre helbreda piller på var sin rad (för längre etiketter). */
+  .lvl-select-stack{flex-direction:column;border-radius:16px;gap:4px}
+  .lvl-select-stack button{flex:none;width:100%;border-radius:12px;padding:9px 10px;font-size:12.5px}
+  .corr-lanpick-note{margin:6px 2px 0;font-size:11.5px;color:var(--ink-soft);line-height:1.35}
+  .corr-lanpick-note.warn{color:#b3541e}
   .viewtabs{display:flex;gap:2px;margin:0 0 16px;border-bottom:2px solid var(--ink)}
   .vtab{
     padding:9px 20px;font:600 13px/1 inherit;border:1px solid var(--line);border-bottom:none;
@@ -1278,9 +1285,14 @@
         <option value="1">Män</option>
       </select>
       <p class="panel-title" style="margin-top:22px">Regionnivå</p>
-      <div class="lvl-select" id="corrLevel">
-        <button data-lvl="lan" class="active">Län</button>
-        <button data-lvl="kommun">Kommun</button>
+      <div class="lvl-select lvl-select-stack" id="corrLevel">
+        <button data-lvl="lan" class="active">Samtliga län</button>
+        <button data-lvl="kommun">Samtliga kommuner</button>
+        <button data-lvl="kommun-lan">Kommuner i ett län</button>
+      </div>
+      <div id="corrLanPick" style="display:none;margin-top:10px">
+        <select id="corrLanSel" class="corr-select"></select>
+        <p class="corr-lanpick-note" id="corrLanCount"></p>
       </div>
       <p class="panel-title" style="margin-top:22px">År</p>
       <select id="corrYear" class="corr-select"></select>
@@ -3927,24 +3939,97 @@ async function initCorrelateView(){
     const sexLbl = corrSex==="1+2" ? "båda könen" : corrSex==="2" ? "kvinnor" : "män";
     $("#correlateOut").innerHTML = `<div class="placeholder">Kön: ${sexLbl}. Klicka "Visa samband" för att hämta.</div>`;
   });
-  // nivåväxel län/kommun
+  // nivåväxel: samtliga län / samtliga kommuner / kommuner i ett län
   document.querySelectorAll("#corrLevel button").forEach(b=>{
     b.addEventListener("click",()=>{
       if(b.disabled) return;
       document.querySelectorAll("#corrLevel button").forEach(x=>x.classList.toggle("active",x===b));
-      corrLevel = b.dataset.lvl;
+      corrMode = b.dataset.lvl;                       // "lan" | "kommun" | "kommun-lan"
+      corrLevel = corrMode==="lan" ? "lan" : "kommun"; // hämtnivå (båda kommun-lägena = kommun)
+      // visa/dölj länsväljaren; fyll den vid behov
+      const pick = $("#corrLanPick");
+      if(corrMode==="kommun-lan"){
+        populateCorrLanSel();
+        pick.style.display="";
+        updateCorrLanCount();
+      } else {
+        pick.style.display="none";
+      }
       // byte av nivå kräver ny hämtning; nollställ cache och uppmana att köra
       CORR_CACHE = { xKey:null, yKey:null, xData:null, yData:null };
-      $("#correlateOut").innerHTML = `<div class="placeholder">Nivå: ${corrLevel==="lan"?"län":"kommuner"}. Klicka "Visa samband" för att hämta.</div>`;
+      $("#correlateOut").innerHTML = `<div class="placeholder">Nivå: ${corrLevelWord(true)}. Klicka "Visa samband" för att hämta.</div>`;
       // BRP är inte valbart på kommunnivå
       document.querySelectorAll('#corrX option[value="m:brp"], #corrY option[value="m:brp"]').forEach(o=>{
         o.disabled = (corrLevel!=="lan");
       });
     });
   });
+  // byte av län i dropdownen: uppdatera antal + nollställ cache
+  const lanSel = $("#corrLanSel");
+  if(lanSel) lanSel.addEventListener("change",()=>{
+    corrLanFilter = lanSel.value || null;
+    updateCorrLanCount();
+    CORR_CACHE = { xKey:null, yKey:null, xData:null, yData:null };
+    $("#correlateOut").innerHTML = `<div class="placeholder">Nivå: ${corrLevelWord(true)}. Klicka "Visa samband" för att hämta.</div>`;
+  });
 }
 
-let corrLevel = "lan";   // "lan" | "kommun"
+// Fyll länsdropdownen med de 21 länen ur profileRegions. Fyller bara när
+// listan faktiskt finns; om regionerna ännu inte hämtats lämnas dropdownen tom
+// och fylls vid nästa anrop (t.ex. när vyn öppnas på nytt).
+function populateCorrLanSel(){
+  const sel = $("#corrLanSel");
+  if(!sel) return;
+  const lan = profileRegions
+    .filter(r=> /^\d{2}$/.test(r.code) && r.code!=="00")
+    .sort((a,b)=>a.code.localeCompare(b.code));
+  if(!lan.length) return;                 // regioner ej laddade ännu → försök igen senare
+  if(sel.options.length === lan.length) { // redan korrekt fylld
+    if(corrLanFilter) sel.value = corrLanFilter;
+    return;
+  }
+  sel.innerHTML = lan.map(r=>`<option value="${r.code}">${cleanLanName(r.name)}</option>`).join("");
+  // förval: första länet, så ett val alltid finns
+  if(!corrLanFilter){ corrLanFilter = lan[0].code; }
+  sel.value = corrLanFilter;
+}
+
+// Visa hur många kommuner som hamnar i diagrammet för valt län.
+function updateCorrLanCount(){
+  const el = $("#corrLanCount");
+  if(!el) return;
+  const n = corrRegions().length;
+  const lanName = (()=>{ const r=profileRegions.find(r=>r.code===corrLanFilter); return r?cleanLanName(r.name):""; })();
+  let txt = `${n} ${n===1?"kommun":"kommuner"} i ${lanName} visas i diagrammet.`;
+  el.classList.remove("warn");
+  if(n<3){
+    txt += " För få för korrelation (minst tre krävs) — visas utan r och trendlinje.";
+    el.classList.add("warn");
+  } else if(n<5){
+    txt += " Få kommuner gör sambandet osäkert.";
+    el.classList.add("warn");
+  }
+  el.textContent = txt;
+}
+
+// Ord för aktuell nivå (för meddelanden). full=true ger den längre varianten.
+function corrLevelWord(full){
+  if(corrMode==="lan") return full ? "samtliga län" : "län";
+  if(corrMode==="kommun") return full ? "samtliga kommuner" : "kommuner";
+  const r = profileRegions.find(r=>r.code===corrLanFilter);
+  const nm = r ? cleanLanName(r.name) : "valt län";
+  return full ? `kommuner i ${nm}` : "kommuner";
+}
+
+// corrMode = användarens val av regionnivå i gränssnittet:
+//   "lan"        – samtliga 21 län
+//   "kommun"     – samtliga kommuner i landet
+//   "kommun-lan" – kommunerna i ett valt län (corrLanFilter = länskod)
+// corrLevel = den nivå datat hämtas på ("lan" eller "kommun"); härleds ur
+// corrMode eftersom både "kommun" och "kommun-lan" hämtar på kommunnivå.
+let corrMode = "lan";        // "lan" | "kommun" | "kommun-lan"
+let corrLanFilter = null;    // länskod (två siffror) när corrMode === "kommun-lan"
+let corrLevel = "lan";       // "lan" | "kommun" — härledd hämtnivå
 let corrForm = "total";  // utbildningsform för övergångsmått
 let corrSex = "1+2";     // "1+2" (båda) | "2" (kvinnor) | "1" (män)
 
@@ -4052,11 +4137,19 @@ function valueForYear(series, year){
 
 $("#corrRun").addEventListener("click", runCorrelation);
 
-// regioner för aktuell nivå (län = tvåsiffrig, kommun = fyrsiffrig)
+// regioner för aktuell nivå (län = tvåsiffrig, kommun = fyrsiffrig).
+// I läget "kommun-lan" filtreras kommunerna till det valda länet (kodens två
+// första siffror = länskod, samma konvention som Kommuntabeller).
 function corrRegions(){
-  return profileRegions.filter(r=> corrLevel==="lan"
-    ? (/^\d{2}$/.test(r.code) && r.code!=="00")
-    : /^\d{4}$/.test(r.code));
+  if(corrMode==="lan"){
+    return profileRegions.filter(r=> /^\d{2}$/.test(r.code) && r.code!=="00");
+  }
+  // kommun eller kommun-lan: alla fyrsiffriga
+  let komm = profileRegions.filter(r=> /^\d{4}$/.test(r.code));
+  if(corrMode==="kommun-lan" && corrLanFilter){
+    komm = komm.filter(r=> r.code.slice(0,2)===corrLanFilter);
+  }
+  return komm;
 }
 
 async function runCorrelation(){
@@ -4071,9 +4164,15 @@ async function runCorrelation(){
   }
   const regs = corrRegions();
   const codes = regs.map(r=>r.code);
-  const lvlWord = corrLevel==="lan" ? "län" : "kommuner";
-  const slow = corrLevel!=="lan" && [xKey,yKey].some(k=>k==="m:utb"||k==="m:hog");
-  $("#correlateOut").innerHTML = `<div class="msg"><div class="spinner"></div>Hämtar data för alla ${lvlWord}…${slow?" Detta tar en stund på kommunnivå (många anrop).":""}</div>`;
+  // För kommuner-i-ett-län kan urvalet vara mycket litet (Gotland = 1 kommun).
+  // Då vill vi ändå visa diagrammet, så ett år räknas som giltigt så snart minst
+  // EN kommun i länet har data. (Korrelationen beräknas separat och bara när det
+  // finns minst tre punkter.) För de breda vyerna kräver vi fortfarande fem
+  // regioner per år så att en meningsfull punktsvärm visas.
+  const minRegionsPerYear = corrMode==="kommun-lan" ? 1 : 5;
+  const lvlWord = corrLevelWord(true);
+  const slow = corrLevel!=="lan" && corrMode!=="kommun-lan" && [xKey,yKey].some(k=>k==="m:utb"||k==="m:hog");
+  $("#correlateOut").innerHTML = `<div class="msg"><div class="spinner"></div>Hämtar data för ${lvlWord}…${slow?" Detta tar en stund på kommunnivå (många anrop).":""}</div>`;
   try{
     fetchMetricAllLan._transPromise = null; fetchMetricAllLan._transKey = null;   // rensa övergångscache för ny körning
     const [xData, yData] = await Promise.all([
@@ -4081,7 +4180,7 @@ async function runCorrelation(){
       fetchMetricAllLan(yKey, codes, corrLevel, corrForm, corrSex)
     ]);
     CORR_CACHE = { xKey, yKey, xData, yData };
-    // vilka år har båda måtten för minst 5 regioner?
+    // vilka år har båda måtten för minst minRegionsPerYear regioner?
     const yearCoverage = {};
     CORR_YEARS.forEach(y=>{
       let n=0;
@@ -4089,7 +4188,7 @@ async function runCorrelation(){
         const xv=xData[r.code]?.[y], yv=yData[r.code]?.[y];
         if(xv!=null && yv!=null && !isNaN(xv) && !isNaN(yv)) n++;
       });
-      if(n>=5) yearCoverage[y]=n;
+      if(n>=minRegionsPerYear) yearCoverage[y]=n;
     });
     const validYears = Object.keys(yearCoverage).sort();
     if(!validYears.length){
@@ -4143,8 +4242,11 @@ $("#corrExport").addEventListener("click",()=>{
     if(k==="m:tjanst") return "SCB AM0210F (tjänstesektor SNI G–S exkl. K,O, ej könsuppdelad)";
     return "";
   };
+  const scopeDesc = corrMode==="lan" ? "21 län"
+    : corrMode==="kommun" ? "Sveriges kommuner"
+    : (()=>{ const r=profileRegions.find(r=>r.code===corrLanFilter); return "kommunerna i " + (r?cleanLanName(r.name):"valt län"); })();
   const rows = csvMetaRows([
-    ["Innehåll:", "Två variabler mätta över " + (corrLevel==="lan"?"21 län":"Sveriges kommuner") + " år " + year + ". Spridningsdiagram för sambandsanalys."],
+    ["Innehåll:", "Två variabler mätta över " + scopeDesc + " år " + year + ". Spridningsdiagram för sambandsanalys." + (corrMode==="kommun-lan" && points.length<3 ? " OBS: färre än tre kommuner – ingen korrelation beräknad." : corrMode==="kommun-lan" && points.length<5 ? " OBS: få kommuner – korrelationen är osäker." : "")],
     ["X-variabel:", xM.label + " (" + srcFor(xKey) + ")"],
     ["Y-variabel:", yM.label + " (" + srcFor(yKey) + ")"],
     ["Kön:", sexLbl + (corrSex!=="1+2"?" (gäller endast variabler som har könsuppdelning)":"")],
@@ -4154,7 +4256,8 @@ $("#corrExport").addEventListener("click",()=>{
   points.forEach(p=>{
     rows.push([p.label, String(p.x).replace(".",","), String(p.y).replace(".",","), year]);
   });
-  downloadCSV(rows, `scb_samband_${corrLevel}_${year}.csv`);
+  const fileScope = corrMode==="kommun-lan" && corrLanFilter ? `kommun_lan${corrLanFilter}` : corrLevel;
+  downloadCSV(rows, `scb_samband_${fileScope}_${year}.csv`);
 });
 
 function pearson(pts){
@@ -4190,13 +4293,17 @@ function linreg(pts){
 }
 function renderScatter(points, xKey, yKey, year){
   const xM=METRICS[xKey], yM=METRICS[yKey];
-  if(points.length<3){
-    $("#correlateOut").innerHTML = `<div class="msg">För få datapunkter (${points.length}) för ${year}. Ett spridningsdiagram behöver minst tre län. Prova ett annat år eller annan kombination.</div>`;
+  if(!points.length){
+    $("#correlateOut").innerHTML = `<div class="msg">Ingen data för ${year}. Prova ett annat år eller annan kombination.</div>`;
     return;
   }
-  const r=pearson(points);
+  // Pearson kräver minst tre punkter; med 1–2 punkter visar vi ändå diagrammet
+  // (t.ex. Gotland = en kommun) men utan r, r² och trendlinje. En linje genom
+  // bara två punkter vore missvisande, så regressionen ritas först vid tre.
+  const enoughForStats = points.length>=3;
+  const r = enoughForStats ? pearson(points) : null;
   const r2 = r==null ? null : r*r;
-  const reg = linreg(points);
+  const reg = enoughForStats ? linreg(points) : null;
   const rTxt = r==null ? "" : `Pearson r: <b>${r.toFixed(2)}</b> · förklaringsgrad r²: <b>${(r2*100).toFixed(0)} %</b>`;
   // beskriv vad året betyder per axel (övergångar = avgångsår + uppföljningsår)
   const xNote = metricYearNote(xKey, year), yNote = metricYearNote(yKey, year);
@@ -4218,11 +4325,27 @@ function renderScatter(points, xKey, yKey, year){
   const lvlWord = corrLevel==="lan" ? "län" : "kommuner";
   const sexLbl = corrSex==="1+2" ? "båda könen" : corrSex==="2" ? "kvinnor" : "män";
   const showLabels = points.length <= 40;   // utskrivna namn bara när det inte blir rörigt
+  const unit = corrLevel==="lan" ? "län" : "kommun";
+  // kontext för urvalet: vid kommuner-i-ett-län namnger vi länet i underrubriken
+  const scopeTxt = corrMode==="kommun-lan"
+    ? (()=>{ const r=profileRegions.find(r=>r.code===corrLanFilter); return r?` i ${cleanLanName(r.name)}`:""; })()
+    : "";
+  // Meddelande vid få kommuner. Med 1–2 går ingen korrelation att beräkna,
+  // med 3–4 beräknas den men är instabil. Texten skiljer på de två fallen.
+  let fewWarn = "";
+  if(corrMode==="kommun-lan" && points.length<3){
+    fewWarn = `<div class="corr-fewwarn">⚠︎ Endast ${points.length} ${points.length===1?"kommun":"kommuner"} i diagrammet. Korrelation och trendlinje kräver minst tre punkter och visas därför inte — ${points.length===1?"punkten redovisas":"punkterna redovisas"} enbart som värde.</div>`;
+  } else if(corrMode==="kommun-lan" && points.length<5){
+    fewWarn = `<div class="corr-fewwarn">⚠︎ Endast ${points.length} kommuner i diagrammet. Med så få punkter är korrelationen mycket osäker — en enda kommun kan styra både r och trendlinjen. Tolka resultatet med stor försiktighet.</div>`;
+  }
+  // antal-ord med korrekt singular/plural (1 län / 1 kommun, annars plural)
+  const countWord = points.length===1 ? (corrLevel==="lan" ? "län" : "kommun") : lvlWord;
   $("#correlateOut").innerHTML = `
     <div class="corr-head">
       <h2 style="margin:0 0 2px;font-size:20px">${yM.label} mot ${xM.label}</h2>
-      <p style="margin:0;color:var(--ink-soft);font-size:13px">En punkt per ${corrLevel==="lan"?"län":"kommun"} · ${points.length} ${lvlWord} · ${sexLbl}. ${rTxt}</p>
+      <p style="margin:0;color:var(--ink-soft);font-size:13px">En punkt per ${unit}${scopeTxt} · ${points.length} ${countWord} · ${sexLbl}. ${rTxt}</p>
     </div>
+    ${fewWarn}
     <div class="corr-years">${yearLine}</div>
     <div class="chart-canvas-wrap" style="height:480px;margin-top:14px"><canvas id="corrCanvas"></canvas></div>
     <p class="corr-disclaimer">Samband betyder inte orsak. För övergångsmåtten avser året avgångsår, dvs vårterminens år då kullen tog examen (t.ex. 2019 = läsåret 2018/2019); uppföljningen av vidare studier skedde 1, 3 respektive 5 år senare. Trendlinjen är en enkel linjär regression; r² anger hur stor andel av variationen i y som statistiskt följer x.${corrSex!=="1+2"?` <b>Obs:</b> Vid könsval gäller valet övergångar, högskoleförberedande gymnasieprogram, sysselsättning, arbetslöshet och utbildningsnivå. Jobb som kräver högskoleutbildning, BRP och tjänstesektor redovisas alltid som totalvärden (saknar könsuppdelning i appens hämtning).`:""}${showLabels?"":" Håll muspekaren över en punkt för att se vilken kommun det är."}</p>`;
