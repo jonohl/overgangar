@@ -296,8 +296,8 @@
     padding-bottom:18px;border-bottom:1px solid var(--line)}
   .cmp-mode-label{font:600 11px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.1em;
     text-transform:uppercase;color:var(--ink-soft)}
-  .cmp-mode{display:inline-flex;gap:0;border:1px solid rgba(255,255,255,.8);border-radius:999px;padding:3px;position:relative;
-    background:rgba(255,255,255,.55);
+  .cmp-mode{display:inline-flex;gap:0;border:1px solid rgba(255,255,255,.9);border-radius:999px;padding:3px;position:relative;
+    background:rgba(255,255,255,.72);
     backdrop-filter:blur(10px) saturate(1.3);
     -webkit-backdrop-filter:blur(10px) saturate(1.3);
     box-shadow:inset 0 1px 1px rgba(255,255,255,.85), inset 0 -2px 4px rgba(59,121,146,.06), 0 2px 8px -3px rgba(59,121,146,.2);
@@ -345,14 +345,15 @@
     height:var(--cm-h, 0);transform:translateY(var(--cm-y, 0));
     border-radius:99px;background:var(--grad-accent);
     box-shadow:0 4px 14px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
-    transition:transform .38s var(--ease-out), height .38s var(--ease-out);
+    transition:transform .3s var(--ease), height .3s var(--ease);
     z-index:0;pointer-events:none;overflow:hidden;}
-  .cmp-mode-stack button{width:100%;border-radius:99px;padding:11px 12px;font-size:12.5px;color:var(--ink);
-    background:transparent;border:none;box-shadow:none;position:relative;z-index:1;
-    transition:color .25s var(--ease);}
+  .cmp-mode-stack button{width:100%;border-radius:99px;padding:11px 12px;font-size:12.5px;
+    background:transparent;border:none;box-shadow:none;position:relative;z-index:1;}
+  .cmp-mode-stack button:not(.lit){color:var(--ink)!important}
+  .cmp-mode-stack button.lit{color:#fff!important}
   .cmp-mode-stack button:hover:not(.active){color:var(--accent);background:rgba(255,255,255,.45)}
-  .cmp-mode-stack button.active{background:transparent;box-shadow:none;color:#fff}
-  .cmp-mode-stack.indicator-ready button.active{background:transparent;box-shadow:none;color:#fff}
+  .cmp-mode-stack button.active{background:transparent;box-shadow:none}
+  .cmp-mode-stack.indicator-ready button.active{background:transparent;box-shadow:none}
   .cmp-mode-hint{font-size:12px;color:var(--ink-soft);font-style:italic;max-width:42ch;line-height:1.45}
   @media(max-width:620px){ .cmp-mode-hint{flex-basis:100%} }
   .ts-controls{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:0 0 16px}
@@ -390,7 +391,7 @@
   .kt-controls .btn{width:auto;padding:10px 16px;font-size:13px;white-space:nowrap}
   .kt-controls .corr-select{min-width:200px}
   .kt-source{font-size:13px;color:var(--ink-soft);background:var(--accent-soft);
-    border-left:3px solid var(--accent);padding:8px 12px;margin:0 0 18px;border-radius:0 5px 5px 0;line-height:1.45}
+    border-left:3px solid var(--accent);padding:8px 12px;margin:18px 0 0;border-radius:0 5px 5px 0;line-height:1.45}
   .kt-source b{color:var(--ink)}
   .kt-source:empty{display:none}
   .kt-sortable{cursor:pointer;user-select:none}
@@ -398,6 +399,7 @@
   /* Två sticky-kolumner: län (vänster) och kommun (intill län). Beräkna offset
      dynamiskt via en CSS-variabel sätter vi inte — använd fast bredd i px. */
   #ktOut .kt-cell-lan{color:var(--ink-soft);font-weight:400;font-size:12px}
+  #ktOut table.cmp td.kt-col-kommun{font-weight:400}
   #ktOut table.cmp th.kt-col-kommun, #ktOut table.cmp td.kt-col-kommun{left:140px}
   #ktOut table.cmp th.cmp-region:not(.kt-col-kommun), #ktOut table.cmp td.cmp-region:not(.kt-col-kommun){min-width:130px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .cmp-table-wrap{overflow-x:auto;overflow-y:visible;max-width:100%}
@@ -420,7 +422,7 @@
     background-color:transparent;
     background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1.5L7 7L13 1.5' stroke='%23456778' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
-      linear-gradient(180deg, rgba(241,249,249,.95) 0%, rgba(224,239,240,.92) 100%);
+      linear-gradient(180deg, rgba(253,254,254,.98) 0%, rgba(242,249,250,.96) 100%);
     background-repeat:no-repeat, no-repeat;
     background-position:right 16px center, center;
     background-size:13px auto, auto;
@@ -428,12 +430,21 @@
   }
   .corr-select:hover{background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1.5L7 7L13 1.5' stroke='%233b7992' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
-      linear-gradient(180deg, rgba(246,251,251,.97) 0%, rgba(230,243,243,.94) 100%);}
+      linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(248,253,253,.99) 100%);}
   .corr-select:focus{outline:2px solid var(--accent);outline-offset:1px}
   /* Regionprofiler */
   .prof-intro{font-size:14px;color:var(--ink-soft);max-width:70ch;margin:0 0 20px}
   .prof-h{font-size:13px;font-weight:600;letter-spacing:.02em;margin:22px 0 10px;
     padding-bottom:6px;border-bottom:2px solid var(--ink)}
+  /* Vyrubrikerna högst upp i resultatytan ges samma format som etiketterna i
+     vänster- och mittkolumnen (liten, versal, spärrad, med tunn skiljelinje),
+     men i svart. Överskriver .prof-h:s större storlek och tjocka understrykning. */
+  .view-title{
+    font:600 11px/1.2 var(--font-ui);letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink);margin:-4px 0 14px;padding-bottom:0;border-bottom:none;
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  }
+  .view-title::after{content:"";flex:1 1 30px;min-width:24px;height:1px;background:var(--line)}
   .prof-sub{font-size:12.5px;color:var(--ink-soft);margin:-4px 0 12px;max-width:70ch}
   .prof-sub b{color:var(--ink)}
   .trans-layout{display:flex;gap:16px;align-items:stretch;margin-top:12px;flex-wrap:wrap}
@@ -504,9 +515,8 @@
     text-transform:uppercase;color:var(--ink-soft);display:block}
   body{
     background:
-      radial-gradient(60% 50% at 100% 0%, rgba(154,207,174,.30) 0%, transparent 62%),
-      radial-gradient(55% 60% at 0% 18%, rgba(112,163,189,.22) 0%, transparent 58%),
-      radial-gradient(70% 55% at 50% 100%, rgba(140,195,197,.24) 0%, transparent 60%),
+      radial-gradient(60% 50% at 100% 0%, rgba(197,225,226,.16) 0%, transparent 62%),
+      radial-gradient(70% 55% at 100% 100%, rgba(112,163,189,.07) 0%, transparent 60%),
       var(--paper);
     background-attachment:fixed;
     color:var(--ink);
@@ -523,7 +533,7 @@
   header{
     border-bottom:1px solid rgba(112,163,189,.38);
     padding:11px 40px;
-    background:linear-gradient(115deg, rgba(154,207,174,.42) 0%, rgba(140,195,197,.36) 45%, rgba(112,163,189,.40) 100%), rgba(251,252,251,.8);
+    background:linear-gradient(115deg, rgba(186,214,213,.62) 0%, rgba(140,195,197,.40) 48%, rgba(112,163,189,.40) 100%), rgba(247,250,250,.86);
     backdrop-filter:saturate(1.4) blur(18px);
     -webkit-backdrop-filter:saturate(1.4) blur(18px);
     box-shadow:0 10px 30px -12px rgba(59,121,146,.4), inset 0 1px 0 rgba(255,255,255,.6);
@@ -771,7 +781,7 @@
   @media (max-width:860px){main{grid-template-columns:1fr;height:auto;overflow:visible}}
   aside{
     border-right:1px solid rgba(112,163,189,.32);padding:24px 22px;
-    background:linear-gradient(160deg, rgba(154,207,174,.34) 0%, rgba(140,195,197,.28) 48%, rgba(112,163,189,.34) 100%), rgba(248,251,250,.9);
+    background:rgba(218, 235, 234, .92);
     backdrop-filter:blur(10px) saturate(1.25);
     -webkit-backdrop-filter:blur(10px) saturate(1.25);
     box-shadow:inset -1px 0 0 rgba(255,255,255,.55), 3px 0 22px -8px rgba(59,121,146,.24);
@@ -790,7 +800,11 @@
      sticky:top:0 fast vid sektionens padding-box-top. Med padding-top:28px
      skulle innehåll synas i padding-fönstret ovanför thead under scroll. Vi
      nollställer därför padding-top för dessa två vyer och flyttar luften till
-     första elementet i stället. */
+     första elementet (rubriken) i stället. */
+  #view-kommun > section.results,
+  #view-compare > section.results{padding-top:0}
+  #view-kommun > section.results > .prof-h:first-child,
+  #view-compare > section.results > .prof-h:first-child{padding-top:28px;background:inherit}
   @media (max-width:860px){section.results{overflow-y:visible}}
   .panel-title{
     font:600 11px/1.2 var(--font-ui);letter-spacing:.1em;
@@ -802,9 +816,8 @@
   .block-fetch{
     position:sticky;bottom:-22px;margin-bottom:-22px;
     background:
-      linear-gradient(180deg, rgba(248,251,250,0) 0%, rgba(248,251,250,.75) 38%, rgba(248,251,250,1) 64%, rgba(248,251,250,1) 100%),
-      linear-gradient(160deg, rgba(154,207,174,.34) 0%, rgba(140,195,197,.28) 48%, rgba(112,163,189,.34) 100%),
-      rgba(248,251,250,1);
+      linear-gradient(180deg, rgba(218,235,234,0) 0%, rgba(218,235,234,.85) 38%, rgba(218,235,234,1) 64%, rgba(218,235,234,1) 100%),
+      rgba(218,235,234,1);
     backdrop-filter:blur(10px) saturate(1.25);
     -webkit-backdrop-filter:blur(10px) saturate(1.25);
     padding-top:18px;padding-bottom:24px;
@@ -825,6 +838,10 @@
   .info-btn:focus-visible, .ts-region-pick label:focus-within{
     outline:3px solid var(--accent); outline-offset:2px; border-radius:99px;
   }
+  /* Sökfältet i dropdown-popupen ska ligga kvar plant överst, så det får inte
+     den helrundade fokusformen (popupen klipper ändå hörnen via overflow:hidden).
+     Fokusringen ritas inåt så den inte krockar med popupens kant. */
+  .tabledd-search:focus-visible{border-radius:0;outline-offset:-3px}
   .var{
     border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;
     background:#fff;overflow:hidden;
@@ -905,13 +922,14 @@
     height:var(--bt-h, 0);transform:translateY(var(--bt-y, 0));
     border-radius:99px;background:var(--grad-accent);
     box-shadow:0 4px 14px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
-    transition:transform .38s var(--ease-out), height .38s var(--ease-out);
+    transition:transform .3s var(--ease), height .3s var(--ease);
     z-index:0;pointer-events:none;overflow:hidden;}
-  .bs-toggle-stack button{flex:none;width:100%;border-radius:99px;padding:11px 12px;font-size:12.5px;color:var(--ink);
-    background:transparent;border:none;box-shadow:none;position:relative;z-index:1;overflow:visible;
-    transition:color .25s var(--ease);}
+  .bs-toggle-stack button{flex:none;width:100%;border-radius:99px;padding:11px 12px;font-size:12.5px;
+    background:transparent;border:none;box-shadow:none;position:relative;z-index:1;overflow:visible;}
+  .bs-toggle-stack button:not(.lit){color:var(--ink)}
+  .bs-toggle-stack button.lit{color:#fff}
   .bs-toggle-stack button:hover:not(.active){color:var(--accent);background:rgba(255,255,255,.45)}
-  .bs-toggle-stack button.active{background:transparent;box-shadow:none;color:#fff}
+  .bs-toggle-stack button.active{background:transparent;box-shadow:none}
   .bs-toggle-stack button.active::after{display:none}
   .val .bs-mini{
     font:600 9px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em;
@@ -920,8 +938,8 @@
   .val .bs-mini.boende{background:#d9ecdd;color:var(--good)}
   .val .bs-mini.skola{background:#f3e9d6;color:var(--warn)}
   .lvl-select{display:flex;gap:4px;margin:0 0 8px;flex-wrap:wrap;padding:5px;border-radius:21px;
-    background:rgba(255,255,255,.5);
-    border:1px solid rgba(255,255,255,.8);
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(255,255,255,.9);
     backdrop-filter:blur(10px) saturate(1.3);
     -webkit-backdrop-filter:blur(10px) saturate(1.3);
     box-shadow:inset 0 1px 1px rgba(255,255,255,.85), inset 0 -2px 4px rgba(59,121,146,.06), 0 2px 8px -3px rgba(59,121,146,.2);
@@ -1052,6 +1070,14 @@
   .btn.ghost::after{display:none}
   .btn:active{transform:translateY(1px);box-shadow:0 2px 6px -2px rgba(59,121,146,.4);transition-duration:.08s}
   .btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;transform:none;filter:grayscale(.3)}
+  /* Inaktiv CSV-knapp tonas ned tydligt; aktiv blir nästan vit (se .btn.ghost),
+     så skillnaden mellan "går att exportera" och "går inte" syns klart. */
+  .btn.ghost:disabled{
+    opacity:1;filter:none;
+    background:rgba(255,255,255,.32);color:var(--ink-soft);
+    border-color:rgba(112,163,189,.22);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+  }
   /* Liten vit pil till höger i knappar som visar resultat i resultatvyn,
      motsvarande pilen i flärpen och den valda vy-pillret. */
   .btn-go{padding-left:14px;padding-right:30px}
@@ -1063,14 +1089,14 @@
   }
   .btn-go:disabled::before{opacity:.6}
   .btn.ghost{
-    background:rgba(255,255,255,.55);color:var(--accent);border:1px solid rgba(255,255,255,.8);
+    background:rgba(255,255,255,.92);color:var(--accent);border:1px solid rgba(59,121,146,.35);
     backdrop-filter:blur(10px) saturate(1.3);
     -webkit-backdrop-filter:blur(10px) saturate(1.3);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 2px 8px -4px rgba(59,121,146,.18);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 3px 10px -4px rgba(59,121,146,.28);
   }
   .btn.ghost:hover{
-    background:rgba(255,255,255,.75);color:var(--djupbla);border-color:var(--blagra);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 8px 20px -6px rgba(59,121,146,.3);filter:none;
+    background:#fff;color:var(--djupbla);border-color:var(--blagra);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,1), 0 8px 20px -6px rgba(59,121,146,.35);filter:none;
   }
   .toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
   .toolbar .btn{width:auto;padding:9px 14px;font-size:13px}
@@ -1107,8 +1133,12 @@
   tbody tr:hover td:first-child{background:#eef4f1}
   .num{font-variant-numeric:tabular-nums}
   .placeholder,.msg{
-    border:1px dashed var(--line);border-radius:var(--radius);padding:40px 24px;
+    border:1px dashed var(--line);border-radius:var(--radius);padding:24px;
     text-align:center;color:var(--ink-soft);background:rgba(255,255,255,.5)
+  }
+  .placeholder{
+    min-height:130px;box-sizing:border-box;
+    display:flex;align-items:center;justify-content:center;
   }
   .msg.err{border-color:var(--bad);color:var(--bad);background:#fbf0ee;text-align:left}
   .msg.err code{font-size:12px;display:block;margin-top:8px;color:var(--ink-soft);white-space:pre-wrap}
@@ -1129,10 +1159,10 @@
     width:100%;display:flex;align-items:flex-start;gap:8px;text-align:left;
     padding:12px 16px;border:1px solid transparent;border-radius:22px;
     color:var(--ink);font-size:13.5px;line-height:1.35;cursor:pointer;
-    background:linear-gradient(180deg, rgba(241,249,249,.95) 0%, rgba(224,239,240,.92) 100%);
+    background:linear-gradient(180deg, rgba(253,254,254,.98) 0%, rgba(242,249,250,.96) 100%);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 1px 3px -2px rgba(59,121,146,.25);
   }
-  .tabledd-btn:hover{background:linear-gradient(180deg, rgba(248,253,253,.99) 0%, rgba(236,247,247,.97) 100%);}
+  .tabledd-btn:hover{background:linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(248,253,253,.99) 100%);}
   .tabledd-btn:focus{outline:2px solid var(--accent);outline-offset:1px}
   #tableBtnText{flex:1}
   .tabledd-caret{color:var(--ink-soft);font-size:12px;margin-top:2px}
@@ -1152,6 +1182,23 @@
   .tabledd-opt.selected{background:var(--ink);color:#fff}
   .tabledd-opt .opt-code{font:600 10px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--accent);display:block;margin-bottom:3px;letter-spacing:.04em}
   .tabledd-opt.selected .opt-code{color:#a9d0d2}
+  /* Popup med sökfält (används av regionväljaren i Regionprofiler). Behållaren bär
+     ram och skugga; listan inuti scrollar medan sökfältet ligger kvar överst. */
+  .tabledd-pop{
+    display:none;position:absolute;z-index:20;top:calc(100% + 4px);left:0;right:0;
+    background:#fff;border:1px solid var(--ink);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;
+  }
+  .tabledd.open .tabledd-pop{display:block}
+  .tabledd-pop .tabledd-list{display:block;position:static;border:none;border-radius:0;box-shadow:none;max-height:300px}
+  .tabledd-search{
+    display:block;width:100%;box-sizing:border-box;padding:11px 12px;
+    margin:0;border:none;border-radius:0;
+    border-bottom:1px solid #e4ede9;font:500 13px/1.2 var(--font-ui);color:var(--ink);
+    background:#fff;outline:none;
+  }
+  .tabledd-search::placeholder{color:var(--ink-soft);opacity:.85}
+  .tabledd-search:focus{background:var(--accent-soft)}
+  .tabledd-empty{padding:12px;font-size:13px;color:var(--ink-soft);opacity:.8}
 
   /* ====================================================================
      VÄNSTER VY-KOLUMN + DÖLJBARA SIDOMENYER
@@ -1171,20 +1218,20 @@
        Ligger som ett mjukt overlay (soft-light, låg opacitet) och fångar aldrig
        klick. */
     #railRow .rail-band{
-      position:absolute;inset:0;z-index:24;pointer-events:none;mix-blend-mode:soft-light;
+      position:absolute;left:188px;right:0;top:0;bottom:0;z-index:24;pointer-events:none;mix-blend-mode:soft-light;
       transition:opacity .3s var(--ease);
       /* Pixelbaserade stopp: bandet hugger alltid om vyväljaren (0–240) och
          variabelväljaren (240–540) och tonar ut strax efter, oavsett hur bred
          resultatytan blir på stora skärmar. */
       background:
-        radial-gradient(620px 70% at 0% 50%, rgba(82,153,155,.26), transparent),
-        linear-gradient(90deg, rgba(146,201,205,.20) 0px, rgba(112,163,189,.09) 300px, rgba(112,163,189,.03) 460px, transparent 600px);
+        radial-gradient(420px 70% at 130px 50%, rgba(82,153,155,.13), transparent),
+        linear-gradient(90deg, transparent 0px, rgba(112,163,189,.06) 150px, rgba(112,163,189,.03) 290px, transparent 420px);
     }
     body.sidebar-collapsed #railRow .rail-band{opacity:0}
     /* Flärp-tråden lämnar den aktiva vyn och pekar in i variabelväljaren. Dess
        lodräta läge sätts i JS (--thread-y) och glider med när man byter vy. */
     #railRow #navThread{
-      position:absolute;left:222px;top:var(--thread-y, 150px);width:78px;height:54px;
+      position:absolute;left:198px;top:var(--thread-y, 150px);width:78px;height:54px;
       transform:translateY(-50%);z-index:25;pointer-events:none;
       transition:top .42s var(--ease-out), opacity .3s var(--ease);
     }
@@ -1194,11 +1241,11 @@
     body[data-view="method"] #railRow #navThread{opacity:0}
     /* Vy-väljaren – stående kolumn längst till vänster. */
     #navRail{
-      flex:0 0 240px;width:240px;height:100%;overflow-y:auto;flex-shrink:0;box-sizing:border-box;
+      flex:0 0 188px;width:188px;height:100%;overflow-y:auto;flex-shrink:0;box-sizing:border-box;
       padding:20px 14px 24px;
       display:flex;flex-direction:column;justify-content:flex-start;
-      border-right:1px solid rgba(112,163,189,.34);
-      background:linear-gradient(160deg, rgba(154,207,174,.40) 0%, rgba(140,195,197,.34) 45%, rgba(112,163,189,.38) 100%), rgba(251,252,251,.8);
+      background:#bad6d5;
+      box-shadow:none;
       backdrop-filter:saturate(1.3) blur(16px);
       -webkit-backdrop-filter:saturate(1.3) blur(16px);
       /* Animerbar in-/utfällning: marginalen drar kolumnen åt vänster.
@@ -1242,27 +1289,30 @@
     main.view > section.results{flex:1;min-width:0}
 
     /* ---- Infällt läge: dölj både vy-väljare och inställningspanel ---- */
-    body.sidebar-collapsed #navRail{margin-left:-240px}
+    body.sidebar-collapsed #navRail{margin-left:-188px}
     /* Panelens bredd (och sidopadding) krymper mjukt till 0; resultatet (flex:1)
        breddar sig i exakt samma takt – ett enda kontinuerligt svep utan hopp. */
     body.sidebar-collapsed main.view > aside{width:0;flex-basis:0;padding-left:0;padding-right:0;border-right-width:0;pointer-events:none}
 
     /* ---- Döljknappen ---- */
     #sidebarToggle{
-      position:absolute;top:50%;left:540px;z-index:30;
+      position:absolute;top:50%;left:486px;z-index:30;
       transform:translate(0,-50%);
       width:26px;height:52px;border-radius:0 13px 13px 0;
       display:flex;align-items:center;justify-content:center;
       cursor:pointer;padding:0;
-      border:1px solid rgba(112,163,189,.32);
+      border:1px solid rgba(112,163,189,.18);
       border-left-color:transparent;
-      background:rgba(255,255,255,.96);
+      /* Vänsterkanten startar i exakt panelens ton (218,235,234) så att fliken
+         växer ur kolumnen utan söm, och tonar mjukt mot en något ljusare nyans
+         vid den rundade högerkanten. */
+      background:linear-gradient(90deg, rgb(218,235,234) 0%, rgb(220,237,238) 55%, rgb(224,240,241) 100%);
       color:var(--accent);
-      box-shadow:0 4px 16px -4px rgba(59,121,146,.42), inset 0 1px 0 rgba(255,255,255,.9);
+      box-shadow:6px 2px 18px -8px rgba(59,121,146,.30);
       transition:left .42s var(--ease-out), background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
       backdrop-filter:blur(8px) saturate(1.2);-webkit-backdrop-filter:blur(8px) saturate(1.2);
     }
-    #sidebarToggle:hover{background:#fff;box-shadow:0 6px 20px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.9);transform:translate(0,-50%) scale(1.06)}
+    #sidebarToggle:hover{background:linear-gradient(90deg, rgb(222,238,238) 0%, rgb(228,241,242) 55%, rgb(232,244,245) 100%);box-shadow:7px 3px 22px -7px rgba(59,121,146,.4);transform:translate(0,-50%) scale(1.06)}
     #sidebarToggle:active{transform:translate(0,-50%) scale(.97)}
     #sidebarToggle .sbt-icon{font-size:16px;line-height:1;transition:transform .42s var(--ease-out);font-weight:700}
     /* När infällt: tabben glider ut till skärmens vänsterkant (sticker fram) och pilen vänds. */
@@ -1272,13 +1322,29 @@
     body.sidebar-collapsed #sidebarToggle .sbt-icon{transform:rotate(180deg)}
     /* "Om data och metod" saknar inställningspanel – då finns inget att fälla in, så tabben döljs. */
     body[data-view="method"] #sidebarToggle{display:none}
+    /* Vid vybyte glider mittvyn in från vänster. Dragfliken (in/ut-fällning) ligger
+       utanför .view och skulle annars stå still medan panelen glider fram under den.
+       Vi ger den samma sidledsrörelse via den fristående translate-egenskapen, som
+       komponeras med transformens translate(0,-50%) (lodrät centrering + hover-skala)
+       utan att störa den. Spelas inte i infällt läge (då glider tabben redan i sidled). */
+    body[data-view-anim]:not(.sidebar-collapsed) #sidebarToggle{
+      animation:toggleSlideIn .32s var(--ease-out);
+    }
+    @keyframes toggleSlideIn{
+      from{translate:-22px 0}
+      to{translate:0 0}
+    }
+    @media (prefers-reduced-motion: reduce){
+      body[data-view-anim] #sidebarToggle{animation:none}
+    }
   }
   /* På smala skärmar (≤860px) finns ingen kolumnlayout att fälla in – knappen
      döljs och allt staplas (hanteras nedan). */
   @media (max-width:860px){
     #sidebarToggle{display:none}
     #railRow{display:block}
-    #navRail{display:block;width:100%;box-sizing:border-box;padding:14px 16px 18px;border-right:none}
+    #navRail{display:block;width:100%;box-sizing:border-box;padding:14px 16px 18px;border-right:none;
+      background:#bad6d5;backdrop-filter:saturate(1.3) blur(16px);-webkit-backdrop-filter:saturate(1.3) blur(16px);box-shadow:none}
     .rail-content{display:block}
     /* Grupperingen, bandet och flärp-tråden hör till den breda kolumnlayouten.
        På smala skärmar staplas allt och vyväljaren blir ett kompakt rutnät – då
@@ -1315,7 +1381,7 @@
   #navRail .viewnav-btn{
     border-radius:99px;font:600 12px/1.2 var(--font-ui);white-space:normal;
     position:relative;z-index:1;flex-shrink:0;
-    background:linear-gradient(180deg, rgba(241,249,249,.95) 0%, rgba(224,239,240,.92) 100%);
+    background:linear-gradient(180deg, rgba(253,254,254,.98) 0%, rgba(242,249,250,.96) 100%);
     border:1px solid transparent;
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.95),
@@ -1327,7 +1393,7 @@
   }
   #navRail .viewnav-btn:hover:not(.active){
     color:var(--accent);
-    background:linear-gradient(180deg, rgba(248,253,253,.99) 0%, rgba(236,247,247,.97) 100%);
+    background:linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(248,253,253,.99) 100%);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,1),
       inset 0 -2px 3px -1px rgba(59,121,146,.14),
@@ -1354,21 +1420,24 @@
        har naturlig höjd och vänsterställd text; bandet är top-justerat. */
     #navRail .viewnav{display:flex;flex-direction:column;align-items:stretch;gap:3px;flex:0 0 auto;min-height:0;max-height:none}
     #navRail .viewnav-group{
-      display:block;font:700 9px/1 var(--font-ui);letter-spacing:.14em;text-transform:uppercase;
-      color:var(--djupbla);opacity:.72;margin:15px 0 5px;padding-left:15px;pointer-events:none;
+      display:flex;align-items:center;gap:8px;
+      font:600 11px/1.2 var(--font-ui);letter-spacing:.1em;text-transform:uppercase;
+      color:var(--ink-soft);opacity:1;margin:15px 0 5px;padding-left:15px;padding-right:2px;pointer-events:none;
     }
-    #navRail .viewnav-group:first-of-type{margin-top:2px}
+    #navRail .viewnav-group::after{content:"";flex:1 1 30px;min-width:24px;height:1px;background:var(--line)}
+    #navRail .viewnav-group:first-of-type{margin-top:4px}
     #navRail .viewnav-btn{
-      width:100%;min-height:36px;text-align:left;justify-content:flex-start;
+      width:calc(100% + 20px);min-height:36px;text-align:left;justify-content:flex-start;
       display:flex;align-items:center;padding:9px 15px;font-size:13px;
-      border-radius:11px 3px 3px 11px;          /* flikriktning: rundad vänster, sluten höger – pekar mot panelen */
+      border-radius:11px 0 0 11px;          /* alla flikar dockar mot panelen: rundad vänster, rak höger */
     }
-    /* Glidande markör i höjdled. Höger kant är nästan rak (motsvarar fliken som
-       ansluter mot variabelväljaren); flärp-tråden för ögat vidare över skarven. */
+    /* Glidande markör i höjdled. Höger kant går ända ut till panelkanten (genom
+       högermarginalen) med rak kant, så den valda vyn ser ihopkopplad ut med
+       variabelväljaren i stället för att hänga fritt. */
     #navRail .viewnav-indicator{
-      display:block;position:absolute;left:0;right:0;top:0;width:auto;
+      display:block;position:absolute;left:0;right:-16px;top:0;width:auto;
       height:var(--ind-h, 0);transform:translateY(var(--ind-y, 0));
-      border-radius:11px 3px 3px 11px;background:var(--grad-accent);
+      border-radius:11px 0 0 11px;background:var(--grad-accent);
       box-shadow:0 8px 20px -7px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
       transition:transform .42s var(--ease-out), height .42s var(--ease-out);
       z-index:2;pointer-events:none;overflow:hidden;
@@ -1405,7 +1474,7 @@
     }
   }
   @media (max-width:560px){
-    #navRail .viewnav{display:flex !important;grid-template-columns:none !important;background:rgba(255,255,255,.55) !important;border:1px solid rgba(255,255,255,.8) !important;padding:5px !important}
+    #navRail .viewnav{display:flex !important;grid-template-columns:none !important;background:none !important;border:none !important;padding:0 !important}
     #navRail .viewnav-btn{grid-column:auto !important}
   }
 </style>
@@ -1469,16 +1538,12 @@
     <span class="sbt-icon" aria-hidden="true">‹</span>
   </button>
   <div class="rail-band" aria-hidden="true"></div>
-  <svg id="navThread" aria-hidden="true" viewBox="0 0 78 54" fill="none">
-    <path d="M3 32 C 30 32, 36 13, 74 13" stroke="#3b7992" stroke-width="2.8" stroke-linecap="round" opacity=".58"/>
-    <path d="M65 7.5 L 74 13 L 65 18.5" stroke="#3b7992" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".58"/>
-  </svg>
   <div class="rail-content">
 
 <main id="view-explore" class="view active">
   <aside>
     <div class="block">
-      <p class="panel-title">1 · Tabell</p>
+      <p class="panel-title">Välj tabell</p>
       <div class="tabledd" id="tabledd">
         <button class="tabledd-btn" id="tableBtn" aria-haspopup="listbox" aria-expanded="false">
           <span id="tableBtnText">Laddar tabeller…</span>
@@ -1488,17 +1553,17 @@
       </div>
     </div>
     <div class="block" id="varsBlock">
-      <p class="panel-title">2 · Variabler &amp; urval</p>
+      <p class="panel-title">Välj variabler</p>
       <div id="vars"><p class="placeholder" style="padding:18px">Välj en tabell ovan.</p></div>
     </div>
     <div class="block block-fetch">
-      <p class="panel-title">3 · Hämta</p>
       <button class="btn btn-go" id="runBtn" disabled>Hämta data</button>
       <button class="btn ghost" id="csvBtn" disabled style="width:100%;margin-top:8px">Exportera CSV</button>
     </div>
   </aside>
 
   <section class="results">
+    <h3 class="prof-h view-title">Hämta tabeller</h3>
     <div class="viewtabs" id="viewtabs" style="display:none">
       <button class="vtab active" data-view="table">Tabell</button>
       <button class="vtab" data-view="chart">Diagram</button>
@@ -1526,7 +1591,7 @@
   </section>
 </main>
 
-<!-- ===================== Regionprofiler ===================== -->
+<!-- ===================== Kommuntabeller ===================== -->
 <main id="view-kommun" class="view" style="display:none">
   <aside>
     <div class="block">
@@ -1586,13 +1651,12 @@
     </div>
   </aside>
   <section class="results">
-    <h3 class="prof-h" style="margin-top:0">Kommuntabeller
+    <h3 class="prof-h view-title">Kommuntabeller
     </h3>
-    <p class="prof-sub">Välj län och variabel för att snabbt få fram statistik över samtliga kommuner i länet.</p>
-    <p id="ktSource" class="kt-source"></p>
     <div id="ktOut">
       <div class="placeholder">Välj län och variabel och klicka "Visa tabell".</div>
     </div>
+    <p id="ktSource" class="kt-source"></p>
   </section>
 </main>
 
@@ -1610,7 +1674,10 @@
           <span id="profRegionText">Välj region…</span>
           <span class="tabledd-caret">▾</span>
         </button>
-        <div class="tabledd-list" id="profRegionList" role="listbox"></div>
+        <div class="tabledd-pop" id="profRegionPop">
+          <input type="text" class="tabledd-search" id="profRegionSearch" placeholder="Sök län…" aria-label="Sök län eller kommun" autocomplete="off" spellcheck="false">
+          <div class="tabledd-list" id="profRegionList" role="listbox"></div>
+        </div>
       </div>
     </div>
     <div class="block">
@@ -1629,8 +1696,9 @@
     </div>
   </aside>
   <section class="results">
+    <h3 class="prof-h view-title">Regionprofiler</h3>
     <div id="profileOut">
-      <div class="placeholder">Välj en region till vänster för att se en profil.</div>
+      <div class="placeholder">Välj ett län eller en kommun i panelen för att se en profil.</div>
     </div>
   </section>
 </main>
@@ -1677,6 +1745,7 @@
     </div>
   </aside>
   <section class="results">
+    <h3 class="prof-h view-title">Sambandsanalys</h3>
     <div id="correlateOut">
       <div class="placeholder">Välj två variabler och visa sambandet mellan regioner.</div>
     </div>
@@ -1739,16 +1808,15 @@
     </div>
   </aside>
   <section class="results">
-    <h3 class="prof-h" style="margin-top:0">Jämför län
+    <h3 class="prof-h view-title">Jämför län
     </h3>
     <div id="cmp-out-matrix">
-      <p class="prof-sub">Samtliga län sida vid sida för övergångar och arbetsmarknadsmått. Övergångskolumnerna avser vald utbildningsform. Klicka på en kolumnrubrik för att sortera.</p>
       <div id="compareOut">
-        <div class="placeholder">Klicka "Hämta och jämför alla län" till vänster för att bygga jämförelsetabellen.</div>
+        <div class="placeholder">Klicka "Hämta och jämför alla län" i panelen för att bygga jämförelsetabellen.</div>
       </div>
     </div>
     <div id="cmp-out-timeseries" style="display:none">
-      <p class="prof-sub">Andel av de gymnasieexaminerade i respektive län som påbörjat eftergymnasiala studier, följt över tid. Välj utbildningsform och uppföljningstid till vänster, och kryssa för de län du vill visa.</p>
+      <p class="prof-sub">Andel av de gymnasieexaminerade i respektive län som påbörjat eftergymnasiala studier, följt över tid. Välj utbildningsform och uppföljningstid i panelen, och kryssa för de län du vill visa.</p>
       <div class="ts-body">
         <div id="tsRegionPick" class="ts-region-pick"></div>
         <div id="tsChartWrap" class="ts-chart-wrap">
@@ -1759,7 +1827,7 @@
   </section>
 </main>
 
-<!-- ===================== Om data och metod ===================== -->
+<!-- ===================== Automatisk analys ===================== -->
 <main id="view-patterns" class="view" style="display:none">
   <aside>
     <div class="block">
@@ -1772,9 +1840,9 @@
     <div class="block">
       <p class="panel-title">Välj uppföljningstid</p>
       <select id="patHorizon" class="corr-select">
-        <option value="a1">Inom 1 år</option>
-        <option value="a3" selected>Inom 3 år</option>
-        <option value="a5">Inom 5 år</option>
+        <option value="a1">Övergångar inom 1 år</option>
+        <option value="a3" selected>Övergångar inom 3 år</option>
+        <option value="a5">Övergångar inom 5 år</option>
       </select>
     </div>
     <div class="block block-fetch">
@@ -1783,11 +1851,10 @@
     </div>
   </aside>
   <section class="results">
-    <h3 class="prof-h" style="margin-top:0">Automatisk analys
+    <h3 class="prof-h view-title">Automatisk analys
     </h3>
-    <p class="prof-sub">Vilka arbetsmarknadsvariabler samvarierar med övergången till olika former av högre utbildning? Analysen körs live mot SCB:s API och texterna genereras automatiskt ur resultaten.</p>
     <div id="patternsOut">
-      <div class="placeholder">Välj nivå och uppföljningstid och klicka "Kör analys". Analysen hämtar övergångar för samtliga utbildningsformer och alla arbetsmarknadsmått, korrelerar dem och sammanfattar mönstren i text.</div>
+      <div class="placeholder">Välj nivå och uppföljningstid och klicka "Kör analys". Verktyget hämtar övergångar för samtliga utbildningsformer och arbetsmarknadsmått, korrelerar dem och sammanfattar analysen i text.</div>
     </div>
   </section>
 </main>
@@ -1827,7 +1894,7 @@
       <p>Varje utbildningsform mäts som individens <b>första registrering</b> vid den formen inom uppföljningstiden, hämtad ur respektive statistikregister:</p>
       <p class="method-measure"><b>Högskola.</b> Första registreringen vid universitet eller högskola (grundnivå och avancerad nivå). Följs upp inom 1–10 år och publiceras i november. Källregister: studenter och examina i högskoleutbildning (UF0205).</p>
       <p class="method-measure"><b>Yrkeshögskola.</b> Första gången individen studerat vid yrkeshögskolan. Följs upp inom 1–5 år. Källregister: studerande och examinerade i yrkeshögskolan (UF0701). Tillförd statistiken från och med publiceringsåret 2019.</p>
-      <p class="method-measure"><b>Folkhögskola.</b> Första gången individen deltagit i folkhögskolans <b>särskilda kurser</b>. Endast långa kurser (minst 15 dagar) av kurstypen särskild kurs räknas; allmän kurs ingår alltså inte. Följs upp inom 1–5 år. Källregister: deltagare i folkhögskolan (UF0601). Tillförd 2019.</p>
+      <p class="method-measure"><b>Folkhögskola.</b> Första gången individen deltagit i folkhögskolans <b>särskilda kurser</b>. Endast långa kurser (kurstypen särskild kurs) räknas; allmän kurs ingår alltså inte. Följs upp inom 1–5 år. Källregister: deltagare i folkhögskolan (UF0601). Tillförd 2019.</p>
       <p class="method-measure"><b>Konst- och kulturutbildningar.</b> Första gången individen studerat vid konst- och kulturutbildningar. Följs upp inom 1–5 år. Källregister: studerande i konst- och kulturutbildningar (UF0702). Tillförd från och med publiceringsåret 2020.</p>
       <p><b>Samtliga eftergymnasiala (totalen)</b> nettoräknas: en gymnasieexaminerad som registrerats vid någon av formerna inom perioden räknas som övergången. Eftersom en person kan påbörja flera former överstiger summan av de enskilda formerna totalen.</p>
       <p><b>Fördelning på utbildningsformer.</b> Regionprofiler visar en stapel per form (högskola, yrkeshögskola, folkhögskola, konst- och kulturutbildningar) med andelen av de examinerade som påbörjat respektive form inom tre år. Eftersom formerna överlappar är detta inte en uppdelning som summerar till hundra procent eller till totalen, utan fyra separata andelar som visar regionens profil.</p>
@@ -1864,7 +1931,7 @@
       <h3 id="m-berakning" class="method-h">Beräkningar och jämförelser</h3>
       <p><b>Rangordning och snitt.</b> I Regionprofiler rangordnas regionen mot övriga på samma nivå (län jämförs med län, kommun med kommun). Rangordningen sker för samma år för alla regioner, och vid lika värden delas placeringen. För arbetslöshet är låg nivå bättre, så rangordningen vänds där. Det "snitt" som visas är ett <b>ovägt medelvärde</b> av regionernas värden (varje region väger lika mycket oavsett storlek), inte det befolkningsvägda riksgenomsnittet. Därför står det uttryckligen "länssnitt" respektive "kommunsnitt".</p>
       <p><b>Riksreferens.</b> Trenddiagrammet i Regionprofiler visar regionens egna övergångskurvor som heldragna linjer och rikets motsvarande nivåer (1, 3 och 5 år) som streckade linjer, så att regionen kan ställas mot riksnivån över tid. Riket räknas inte in i läns- eller kommunrangordningen.</p>
-      <p><b>Färgskala i Jämför län.</b> Varje kolumn färgas på en grön skala från lägst till högst värde inom kolumnen. För arbetslöshet är skalan vänd så att grönt alltid betyder gynnsamt för regionen. Varje kolumns rubrik visar det dominerande året; enskilda celler kan i sällsynta fall avse ett annat år om en region saknar senaste årets data (syns vid hovring).</p>
+      <p><b>Färgskala i Jämför län.</b> Varje kolumn färgas i en turkos skala där tonen blir mörkare ju högre värdet är inom kolumnen. Färgen visar alltså nivån, inte en värdering. Undantaget är arbetslöshet, där skalan är vänd så att den mörka tonen markerar låg arbetslöshet (det entydigt gynnsamma). Varje kolumns rubrik visar det dominerande året; enskilda celler kan i sällsynta fall avse ett annat år om en region saknar senaste årets data (syns vid hovring).</p>
       <p><b>Utveckling över tid.</b> Jämför län har utöver matrisen ett läge som ritar övergången per län som linjer över avgångsåren, för en vald utbildningsform och uppföljningstid (1, 3, 5 eller 10 år). Man väljer själv vilka län som ska visas. Y-axeln är fast 0–100 % så att länen kan jämföras rättvist.</p>
       <p><b>Korrelation.</b> I Sambandsanalysen visas Pearsons korrelationskoefficient (r) och förklaringsgraden (r², andelen av variationen i y som statistiskt följer x), tillsammans med en linjär regressionslinje (minsta kvadratmetoden). Ett samband kräver minst tre datapunkter och visas bara för år där båda måtten har data för minst fem regioner. Sambandsanalysen har också en könsväljare (båda könen, kvinnor eller män); valet gäller dock bara mått som är könsuppdelade i appens hämtning, alltså övergångar, gymnasiebakgrund, sysselsättning, arbetslöshet, antal studerande och utbildningsnivå. Mått utan könsdimension (jobb som kräver respektive inte kräver högskoleutbildning, BRP, tjänstesektor) visas alltid som totalvärden.</p>
       <p><b>Andelar ur antal.</b> För utbildningsnivå, högskoleförberedande gymnasieprogram, jobb som kräver respektive inte kräver högskoleutbildning, och tjänstesektorn ger SCB bara antal, varför appen själv beräknar andelarna enligt beskrivningarna ovan. Övriga andelsmått (övergångar, sysselsättning, arbetslöshet) hämtas som färdiga värden, liksom BRP per invånare.</p>
@@ -2513,7 +2580,16 @@ function moveNavThread(instant){
   railRowEl.style.setProperty("--thread-y", y + "px");
 }
 // Om vyväljaren råkar scrolla internt (mycket låga skärmar) följer tråden med.
-if(navRailEl) navRailEl.addEventListener("scroll", ()=> moveNavThread(true), {passive:true});
+// Vyväljaren ska bara kunna scrolla lodrätt. Pillren skjuter medvetet ut 20px
+// åt höger för att docka mot parametervyn, vilket ger ett litet skenbart
+// sidledsöverskott. När en flik får fokus (klick) försöker webbläsaren scrolla
+// fram det överskottet, vilket knuffar hela kolumnen några pixlar åt vänster och
+// gör att den markerade fliken inte längre når fram till panelen. Nolla därför
+// alltid scrollLeft – lodrät scroll påverkas inte.
+if(navRailEl) navRailEl.addEventListener("scroll", ()=>{
+  if(navRailEl.scrollLeft !== 0) navRailEl.scrollLeft = 0;
+  moveNavThread(true);
+}, {passive:true});
 
 document.querySelectorAll(".viewnav-btn").forEach(b=>{
   b.addEventListener("click",()=>{
@@ -2529,12 +2605,25 @@ document.querySelectorAll(".viewnav-btn").forEach(b=>{
       m.style.display = (m.id==="view-"+vw) ? "" : "none";
     });
     moveNavIndicator();
+    // Starta om dragflikens sidledsanimation så den glider in i takt med mittvyn.
+    // Attributet växlas av, en reflow tvingas fram, sedan på igen – annars spelas
+    // CSS-animationen bara en gång och skulle inte upprepas vid nästa vybyte.
+    document.body.removeAttribute("data-view-anim");
+    void document.body.offsetWidth;
+    document.body.setAttribute("data-view-anim", "");
     // Se till att den valda fliken är synlig om navigeringsbandet scrollar i sidled.
     // På telefon radbryts pillren i ett band (inget sidledsscroll), och ett
     // scrollIntoView med block:"nearest" rycker då hela sidan lodrätt – det är det
     // som upplevdes som en blinkning vid vybyte. Scrolla därför bara fram pillret
     // när bandet faktiskt kan scrollas i sidled, och bara i sidled (inline).
-    const navScrolls = viewnavEl && viewnavEl.scrollWidth > viewnavEl.clientWidth + 1;
+    // I desktoptläget är vyväljaren en lodrät kolumn där pillren medvetet skjuter
+    // ut 20px åt höger för att docka mot parametervyn. Det ger ett litet skenbart
+    // sidledsöverskott (scrollWidth > clientWidth) som INTE ska scrollas fram –
+    // annars knuffas hela kolumnen 6px åt vänster vid första klicket och den
+    // markerade fliken når inte längre fram till panelen. Hoppa därför över
+    // sidledsscroll när bandet ligger som lodrät kolumn.
+    const navIsColumn = viewnavEl && getComputedStyle(viewnavEl).flexDirection === "column";
+    const navScrolls = !navIsColumn && viewnavEl && viewnavEl.scrollWidth > viewnavEl.clientWidth + 1;
     if(navScrolls) b.scrollIntoView({inline:"nearest", block:"nearest"});
     onViewActivated(vw);
   });
@@ -2641,7 +2730,7 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Enter"||e.key===" "){ e.preventDefault(); opt.click(); }
   else if(e.key==="ArrowDown"||e.key==="ArrowUp"){
     e.preventDefault();
-    const opts=[...opt.parentElement.querySelectorAll(".tabledd-opt")];
+    const opts=[...opt.parentElement.querySelectorAll(".tabledd-opt")].filter(o=>o.offsetParent!==null);
     const i=opts.indexOf(opt);
     const j = e.key==="ArrowDown" ? Math.min(i+1,opts.length-1) : Math.max(i-1,0);
     opts[j].focus();
@@ -3893,11 +3982,29 @@ function buildCSV(){
     // inga kolumndimensioner: en enkel rubrikrad (raddimensioner + en "Värde"-kolumn)
     rows.push([...P.rowDims.map(d=>d.label), "Värde"].join(sep));
   }
+  // Hjälp: avgör om en cell avser en andel/procent. ContentsCode kan ligga på
+  // rad-, kolumn- eller fast dimension; vi läser dess aktiva etikett för cellen
+  // och testar med isShareLabel. Andelar exporteras som 0–1, övriga tal rått.
+  const ccDimB = P.dims.find(d=>/contentscode/i.test(d.id));
+  const cellIsShare = (rc, cc)=>{
+    if(!ccDimB) return false;
+    let lab = null;
+    const fromCombo = [...rc, ...cc].find(x=>x.id===ccDimB.id);
+    if(fromCombo){ lab = fromCombo.label; }
+    else {
+      // fast dimension: använd valt värde (samma logik som fixedIndex)
+      let ci = 0;
+      const sel = (typeof SELECTED!=="undefined") && SELECTED[ccDimB.id];
+      if(sel && sel.size){ const first=[...sel][0]; const idx=ccDimB.codes.indexOf(first); if(idx>=0) ci=idx; }
+      lab = ccDimB.labels[ci];
+    }
+    return isShareLabel(lab);
+  };
   // datarader: radvärden upprepas per raddimension (oförändrat), sedan värdena
   P.rowCombos.forEach(rc=>{
     const line=[...rc.map(x=>x.label)];
     if(!rc.length)line.push("Värde");
-    P.colCombos.forEach(cc=>{const v=P.value(rc,cc);line.push(v==null?"":String(v).replace(".",","));});
+    P.colCombos.forEach(cc=>{const v=P.value(rc,cc);line.push(cellIsShare(rc,cc)?csvShare(v):csvNum(v));});
     rows.push(line.join(sep));
   });
   const escMeta = v => { v = String(v==null?"":v); return /[";\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; };
@@ -3914,6 +4021,27 @@ $("#csvBtn").addEventListener("click",()=>{
 
 /* Gemensam CSV-export: rows = array av arrayer (första raden = rubriker).
    Semikolon som avgränsare (svensk Excel) + UTF-8 BOM så åäö blir rätt. */
+
+/* Numeriska CSV-hjälpare. Alla siffror exporteras i ett rent numeriskt format:
+   inga tusentalsavgränsare, inga citattecken, decimalkomma (svensk Excel läser
+   det som tal). Andelar/procent exporteras som ett värde mellan 0 och 1 med
+   högst fyra decimaler. Internt lagras andelar i procent (0–100), så csvShare
+   delar med 100 innan avrundning. */
+function csvNum(v){
+  if(v==null || v==="" || (typeof v==="number" && !isFinite(v))) return "";
+  const n = typeof v==="number" ? v : Number(String(v).replace(",","."));
+  if(!isFinite(n)) return "";
+  // heltal utan onödig decimal; övriga tal med decimalkomma och utan grupptecken
+  return (Number.isInteger(n) ? String(n) : String(n)).replace(".",",");
+}
+function csvShare(vPercent){
+  if(vPercent==null || vPercent==="" || (typeof vPercent==="number" && !isFinite(vPercent))) return "";
+  const n = typeof vPercent==="number" ? vPercent : Number(String(vPercent).replace(",","."));
+  if(!isFinite(n)) return "";
+  const frac = Math.round((n/100) * 10000) / 10000;   // 0–1, högst fyra decimaler
+  return String(frac).replace(".",",");
+}
+
 function downloadCSV(rows, filename){
   const esc = v => {
     if(v==null) v="";
@@ -3990,7 +4118,7 @@ async function initProfileView(){
     const rv = meta.variables.find(v=>/region/i.test(v.code));
     profileRegions = rv.values.map((c,i)=>({code:c, name:rv.valueTexts[i]}));
     buildProfileRegionList();
-    $("#profileOut").innerHTML = `<div class="placeholder">Välj en region till vänster för att se en profil.</div>`;
+    $("#profileOut").innerHTML = `<div class="placeholder">Välj ett län eller en kommun i panelen för att se en profil.</div>`;
   }catch(err){
     $("#profileOut").innerHTML = `<div class="msg err"><strong>Kunde inte ladda regioner.</strong><code>${err.message.replace(/</g,"&lt;")}</code></div>`;
   }
@@ -4014,6 +4142,7 @@ function buildProfileRegionList(){
       $("#profRegionText").textContent=r.name;
       list.querySelectorAll(".tabledd-opt").forEach(o=>o.classList.toggle("selected",o===opt));
       $("#profRegionDd").classList.remove("open");
+      $("#profRegionBtn").setAttribute("aria-expanded","false");
       // Konsekvent med övriga vyer: körningen sker först när man klickar på knappen.
       const runBtn=$("#profRun"); if(runBtn) runBtn.disabled=false;
       if(!PROFILE_EXPORT || PROFILE_EXPORT.code!==r.code){
@@ -4021,9 +4150,41 @@ function buildProfileRegionList(){
       }
     });
   });
+  // Nollställ sökfältet och anpassa platshållaren till vald nivå.
+  const s=$("#profRegionSearch");
+  if(s){ s.value=""; s.placeholder = profileLevel==="lan" ? "Sök län…" : "Sök kommun…"; }
 }
 
 let profileLevel = "lan";   // "lan" | "kommun"
+// Färgen på slajd-knapparna styrs av pillrets FAKTISKA läge varje bildruta (inte en
+// tidsstyrd övergång). En knapp blir vit exakt när pillret täcker dess text – då kan
+// färgen aldrig ligga före eller efter pillret oavsett rörelsekurva.
+function litInstant(el){
+  if(!el) return;
+  if(el._litRAF){ cancelAnimationFrame(el._litRAF); el._litRAF=0; }
+  el.querySelectorAll("button").forEach(b=>b.classList.toggle("lit", b.classList.contains("active")));
+}
+function litFollow(el, indSel){
+  if(!el) return;
+  const ind = el.querySelector(indSel);
+  if(!ind){ litInstant(el); return; }
+  const btns = [...el.querySelectorAll("button")];
+  if(el._litRAF) cancelAnimationFrame(el._litRAF);
+  const t0 = performance.now();
+  const step = ()=>{
+    const m = getComputedStyle(ind).transform;
+    const mm = m.match(/,\s*([\-\d.]+)\)$/);
+    const top = mm ? parseFloat(mm[1]) : ind.offsetTop;
+    const h = ind.offsetHeight || (btns[0] ? btns[0].offsetHeight : 0);
+    btns.forEach(b=>{
+      const c = b.offsetTop + b.offsetHeight/2;       // knappens textmitt
+      b.classList.toggle("lit", top <= c + 0.5 && c <= top + h + 0.5);  // pillret täcker mitten
+    });
+    if(performance.now()-t0 < 440){ el._litRAF = requestAnimationFrame(step); }
+    else { btns.forEach(b=>b.classList.toggle("lit", b.classList.contains("active"))); el._litRAF=0; }
+  };
+  el._litRAF = requestAnimationFrame(step);
+}
 // Glidande markör för REGION-väljaren (Län/Kommuner): flyttas i höjdled till aktiv knapp.
 function moveProfLevelIndicator(instant){
   const el = document.getElementById("profLevel");
@@ -4040,11 +4201,13 @@ function moveProfLevelIndicator(instant){
     const prev = ind.style.transition;
     ind.style.transition = "none";
     apply();
+    litInstant(el);
     void ind.offsetWidth;
     ind.style.transition = prev;
     return;
   }
   apply();
+  litFollow(el, ".bs-toggle-indicator");   // färgen följer pillret bildruta för bildruta
 }
 document.querySelectorAll("#profLevel button").forEach(b=>{
   b.addEventListener("click",()=>{
@@ -4081,7 +4244,9 @@ let PROFILE_EXPORT = null;
 $("#profExport").addEventListener("click",()=>{
   const P = PROFILE_EXPORT; if(!P) return;
   const isLan = /^\d{2}$/.test(P.code) && P.code!=="00";
-  const num = v => v==null ? "" : String(Math.round(v*100)/100).replace(".",",");
+  // Andelar (enhet "%") exporteras som 0–1 med högst två decimaler; övriga tal rått.
+  const numShare = v => csvShare(v);
+  const numCount = v => csvNum(v==null?null:Math.round(v));
   // senaste år + värde ur {år:värde}
   const latest = obj => {
     const d=obj?.[P.code]; if(!d) return {yr:"",v:null};
@@ -4099,7 +4264,7 @@ $("#profExport").addEventListener("click",()=>{
     ])
   ];
   rows.push(["Mått","Värde","År","Enhet","Register","SCB-tabell"]);
-  const m=(label,obj,unit,reg,tab)=>{ const {yr,v}=latest(obj); rows.push([label, num(v), yr, unit, reg||"", tab||""]); };
+  const m=(label,obj,unit,reg,tab)=>{ const {yr,v}=latest(obj); const isShareUnit = unit==="%"; rows.push([label, isShareUnit?numShare(v):(unit==="antal"||unit==="tkr"?numCount(v):csvNum(v)), yr, isShareUnit?"andel (0–1)":unit, reg||"", tab||""]); };
   m("Sysselsättning 20–64 år", P.syss64, "%", "BAS", "AM0210");
   m("Sysselsättning 20–24 år", P.syss24, "%", "BAS", "AM0210");
   m("Arbetslöshet 20–64 år", P.arbl64, "%", "BAS", "AM0210");
@@ -4114,27 +4279,62 @@ $("#profExport").addEventListener("click",()=>{
   // övergångstidsserie
   rows.push([]);
   rows.push(["Övergångar till vidare studier, tidsserie (avgångsår)"]);
-  rows.push(["Avgångsår","Examinerade","Antal vidare 1 år","Andel 1 år (%)","Antal vidare 3 år","Andel 3 år (%)","Antal vidare 5 år","Andel 5 år (%)","Andel 10 år (%)"]);
+  rows.push(["Avgångsår","Examinerade","Antal vidare 1 år","Andel 1 år (0–1)","Antal vidare 3 år","Andel 3 år (0–1)","Antal vidare 5 år","Andel 5 år (0–1)","Andel 10 år (0–1)"]);
   if(P.trans){
     Object.keys(P.trans).sort().forEach(yr=>{
       const t=P.trans[yr];
-      rows.push([yr, t.tot==null?"":Math.round(t.tot),
-        t.n1==null?"":Math.round(t.n1), num(t.a1),
-        t.n3==null?"":Math.round(t.n3), num(t.a3),
-        t.n5==null?"":Math.round(t.n5), num(t.a5),
-        num(t.a10)]);
+      rows.push([yr, csvNum(t.tot==null?null:Math.round(t.tot)),
+        csvNum(t.n1==null?null:Math.round(t.n1)), csvShare(t.a1),
+        csvNum(t.n3==null?null:Math.round(t.n3)), csvShare(t.a3),
+        csvNum(t.n5==null?null:Math.round(t.n5)), csvShare(t.a5),
+        csvShare(t.a10)]);
     });
   }
   const safe = P.name.replace(/[^\wåäöÅÄÖ]+/g,"_");
   downloadCSV(rows, `scb_profil_${safe}.csv`);
 });
 
-// Öppna/stäng region-dropdown i profilvyn
+// Öppna/stäng region-dropdown i profilvyn. Vid öppning nollställs och fokuseras sökfältet.
 $("#profRegionBtn").addEventListener("click",e=>{
   e.stopPropagation();
-  $("#profRegionDd").classList.toggle("open");
+  const dd=$("#profRegionDd");
+  dd.classList.toggle("open");
+  $("#profRegionBtn").setAttribute("aria-expanded", dd.classList.contains("open"));
+  if(dd.classList.contains("open")){
+    const s=$("#profRegionSearch");
+    s.value=""; filterProfRegions();
+    setTimeout(()=>s.focus(),0);
+  }
 });
-document.addEventListener("click",e=>{ if(!e.target.closest("#profRegionDd")) $("#profRegionDd").classList.remove("open"); });
+document.addEventListener("click",e=>{ if(!e.target.closest("#profRegionDd")){ $("#profRegionDd").classList.remove("open"); $("#profRegionBtn").setAttribute("aria-expanded","false"); } });
+
+// Filtrera regionlistan mot det som skrivs i sökfältet (matchar på regionens namn).
+function filterProfRegions(){
+  const inp=$("#profRegionSearch"); if(!inp) return;
+  const raw=inp.value.trim();
+  const q=raw.toLowerCase();
+  const list=$("#profRegionList");
+  const opts=list.querySelectorAll(".tabledd-opt[data-idx]");
+  let shown=0;
+  opts.forEach(o=>{
+    const match = !q || o.textContent.toLowerCase().includes(q);
+    o.style.display = match ? "" : "none";
+    if(match) shown++;
+  });
+  let empty=list.querySelector(".tabledd-empty");
+  if(opts.length && shown===0){
+    if(!empty){ empty=document.createElement("div"); empty.className="tabledd-empty"; list.appendChild(empty); }
+    empty.textContent = `Ingen träff på ”${raw}”.`;
+    empty.style.display="";
+  } else if(empty){ empty.style.display="none"; }
+}
+$("#profRegionSearch").addEventListener("input", filterProfRegions);
+$("#profRegionSearch").addEventListener("keydown", e=>{
+  const firstVisible = ()=>[...$("#profRegionList").querySelectorAll(".tabledd-opt[data-idx]")].find(o=>o.offsetParent!==null);
+  if(e.key==="ArrowDown"){ e.preventDefault(); const f=firstVisible(); if(f) f.focus(); }
+  else if(e.key==="Enter"){ e.preventDefault(); const f=firstVisible(); if(f) f.click(); }
+  else if(e.key==="Escape"){ $("#profRegionDd").classList.remove("open"); $("#profRegionBtn").setAttribute("aria-expanded","false"); $("#profRegionBtn").focus(); }
+});
 
 async function loadProfile(){
   if(!profileSel.code) return;
@@ -4785,9 +4985,13 @@ $("#corrExport").addEventListener("click",()=>{
     ["Kön:", sexLbl + (corrSex!=="1+2"?" (gäller endast variabler som har könsuppdelning)":"")],
     ["År:", year + ". För övergångsmått avses avgångsår, dvs vårterminens år då kullen tog examen från gymnasieskolan (t.ex. 2019 = läsåret 2018/2019). För arbetsmarknadsmått avses kalenderår."]
   ]);
-  rows.push([lvl, xM.label, yM.label, "År"]);
+  const xIsShare = xM.unit==="%";
+  const yIsShare = yM.unit==="%";
+  const fmtX = v => xIsShare ? csvShare(v) : csvNum(v);
+  const fmtY = v => yIsShare ? csvShare(v) : csvNum(v);
+  rows.push([lvl, xM.label + (xIsShare?" [0–1]":""), yM.label + (yIsShare?" [0–1]":""), "År"]);
   points.forEach(p=>{
-    rows.push([p.label, String(p.x).replace(".",","), String(p.y).replace(".",","), year]);
+    rows.push([p.label, fmtX(p.x), fmtY(p.y), year]);
   });
   const fileScope = corrMode==="kommun-lan" && corrLanFilter ? `kommun_lan${corrLanFilter}` : corrLevel;
   downloadCSV(rows, `scb_samband_${fileScope}_${year}.csv`);
@@ -4837,7 +5041,7 @@ function renderScatter(points, xKey, yKey, year){
   const r = enoughForStats ? pearson(points) : null;
   const r2 = r==null ? null : r*r;
   const reg = enoughForStats ? linreg(points) : null;
-  const rTxt = r==null ? "" : `Pearson r: <b>${r.toFixed(2)}</b> · förklaringsgrad r²: <b>${(r2*100).toFixed(0)} %</b>`;
+  const rTxt = r==null ? "" : `Pearson r: <b>${r.toFixed(2).replace(".",",")}</b> · förklaringsgrad r²: <b>${(r2*100).toFixed(0)} %</b>`;
   // beskriv vad året betyder per axel (övergångar = avgångsår + uppföljningsår)
   const xNote = metricYearNote(xKey, year), yNote = metricYearNote(yKey, year);
   // avgångsårsbaserade mått: övergångar + högskoleförberedande gymnasieprogram
@@ -4960,7 +5164,7 @@ async function initCompareView(){
 // Glidande markör för Länsöversikt/Utveckling-växlaren i Jämför län.
 // Definierad globalt så den alltid finns, oberoende av datainladdning, och
 // kan anropas både vid klick, när vyn visas och vid fönsterändring.
-function moveCmpIndicator(){
+function moveCmpIndicator(animate){
   const cmpModeEl = document.getElementById("cmpMode");
   if(!cmpModeEl) return;
   const active = cmpModeEl.querySelector("button.active");
@@ -4971,6 +5175,7 @@ function moveCmpIndicator(){
   cmpModeEl.style.setProperty("--cm-y", active.offsetTop + "px");
   cmpModeEl.style.setProperty("--cm-h", active.offsetHeight + "px");
   cmpModeEl.classList.add("indicator-ready");
+  if(animate) litFollow(cmpModeEl, ".cmp-mode-indicator"); else litInstant(cmpModeEl);
 }
 // Växlaren matris / utveckling över tid. Kopplas en gång vid sidladdning,
 // oberoende av datainladdningen, så den glidande markören alltid fungerar.
@@ -4982,7 +5187,7 @@ function moveCmpIndicator(){
         x.classList.toggle("active",on);
         x.setAttribute("aria-selected", on?"true":"false");
       });
-      moveCmpIndicator();
+      moveCmpIndicator(true);
       const mode=b.dataset.mode;
       const mp=document.getElementById("cmp-pane-matrix");
       const tp=document.getElementById("cmp-pane-timeseries");
@@ -4995,6 +5200,10 @@ function moveCmpIndicator(){
     });
   });
 })();
+
+// Initialt: gör den aktiva knappen vit direkt i båda slajd-väljarna (funkar även om vyn är dold).
+litInstant(document.getElementById("profLevel"));
+litInstant(document.getElementById("cmpMode"));
 
 // Kryssruta-lista över län för tidsserien (några förvalda)
 function buildTsRegionPick(){
@@ -5065,15 +5274,16 @@ $("#cmpExport").addEventListener("click",()=>{
     ["Utbildningsform för övergångar:", transForm(cmpForm).label],
     ["Årtolkning:", "Övergångsmått (övergångar 1/3/5/10 år, högskoleförberedande gymnasieprogram) använder avgångsår, dvs vårterminens år då kullen tog examen (t.ex. 2019 = läsåret 2018/2019). Arbetsmarknadsmått, BRP och tjänstesektor använder kalenderår."],
     ["Källor:", "Övergångar UF0542 · Sysselsättning/arbetslöshet/studerande AM0210 · Utbildningsnivå UF0506 · Yrkesregister AM0208 (SSYK 2+3 och 4–9) · Högskoleförberedande UF0542A · BRP NR0105 · Tjänstesektor AM0210F"],
-    ["Notera:", "Värden i procent där inget annat anges; BRP i tkr per invånare."]
+    ["Notera:", "Andelar anges som värde mellan 0 och 1 (markerade [0–1] i kolumnrubriken); BRP i tkr per invånare; studerande som antal."]
   ]);
-  const header = ["Län", ...CMP_COLS.map(c=>c.label), ...CMP_COLS.map(c=>c.label+" (år)")];
+  const cmpIsShare = key => (METRICS[key]?.unit === "%");
+  const header = ["Län", ...CMP_COLS.map(c=>c.label + (cmpIsShare(c.key)?" [0–1]":"")), ...CMP_COLS.map(c=>c.label+" (år)")];
   rows.push(header);
   Object.keys(CMP_DATA).forEach(c=>{
     const row=[CMP_DATA[c].name];
     CMP_COLS.forEach(col=>{
       const v=CMP_DATA[c][col.key];
-      row.push(v==null?"":String(v).replace(".",","));
+      row.push(cmpIsShare(col.key) ? csvShare(v) : csvNum(v));
     });
     CMP_COLS.forEach(col=>{ row.push(CMP_DATA[c][col.key+"__yr"]||""); });
     rows.push(row);
@@ -5131,7 +5341,7 @@ async function runTimeseries(){
   const form=$("#tsForm").value, key=$("#tsHorizon").value;
   const picked=[...$("#tsRegionPick").querySelectorAll("input:checked")].map(c=>c.value);
   if(!picked.length){
-    $("#tsChartWrap").innerHTML = `<div class="msg">Kryssa för minst ett län till vänster.</div>`;
+    $("#tsChartWrap").innerHTML = `<div class="msg">Kryssa för minst ett län i panelen.</div>`;
     return;
   }
   $("#tsChartWrap").innerHTML = `<div class="msg"><div class="spinner"></div>Hämtar tidsserier…</div>`;
@@ -5191,11 +5401,11 @@ $("#tsExport").addEventListener("click",()=>{
     ["Utbildningsform:", transForm(form).label],
     ["Uppföljningstid:", "Inom " + horizonLabel + " efter examen"],
     ["Källa:", "SCB UF0542 (övergångar gymnasieskola → eftergymnasial utbildning), tabell per utbildningsform."],
-    ["Årtolkning:", "Året är avgångsår, dvs vårterminens år då kullen tog examen från gymnasieskolan (t.ex. 2019 = läsåret 2018/2019). Värden i procent."]
+    ["Årtolkning:", "Året är avgångsår, dvs vårterminens år då kullen tog examen från gymnasieskolan (t.ex. 2019 = läsåret 2018/2019). Andelar anges som värde mellan 0 och 1."]
   ]);
-  rows.push([`Avgångsår`, ...regs.map(r=>cleanLanName(r.name))]);
+  rows.push([`Avgångsår`, ...regs.map(r=>cleanLanName(r.name)+" [0–1]")]);
   years.forEach(y=>{
-    rows.push([y, ...regs.map(r=>{ const v=data[r.code]?.[y]; return v==null?"":String(v).replace(".",","); })]);
+    rows.push([y, ...regs.map(r=>{ const v=data[r.code]?.[y]; return csvShare(v); })]);
   });
   downloadCSV(rows, `scb_tidsserie_${form}_${key}.csv`);
 });
@@ -5280,7 +5490,7 @@ function renderCompare(){
     });
     tbodyHtml+=`</tr>`;
   });
-  const disclaimerHtml = `<p class="corr-disclaimer cmp-disclaimer">Året under varje rubrik visar vilket år kolumnens värden avser (senaste tillgängliga per län). För övergångsmått och högskoleförberedande gymnasieprogram är det <b>avgångsår</b>, dvs vårterminens år då kullen tog examen (t.ex. 2019 = läsåret 2018/2019); uppföljningen av vidare studier skedde 1, 3 respektive 5 år senare. Övriga mått avser <b>kalenderår</b>.${mixed?" Vissa kolumner blandar år mellan län där data saknas senaste året, håll muspekaren över en cell för dess exakta år.":""} Färgen går per kolumn: grönare = bättre (för arbetslöshet är lågt grönt). Klicka på en rubrik för att sortera.</p>`;
+  const disclaimerHtml = `<p class="corr-disclaimer cmp-disclaimer">Året under varje rubrik visar vilket år kolumnens värden avser (senaste tillgängliga per län). För övergångsmått och högskoleförberedande gymnasieprogram är det <b>avgångsår</b>, dvs vårterminens år då kullen tog examen (t.ex. 2019 = läsåret 2018/2019); uppföljningen av vidare studier skedde 1, 3 respektive 5 år senare. Övriga mått avser <b>kalenderår</b>.${mixed?" Vissa kolumner blandar år mellan län där data saknas senaste året, håll muspekaren över en cell för dess exakta år.":""} Färgen går per kolumn: mörkare turkos = högre värde (för arbetslöshet är skalan vänd, så mörk ton markerar låg arbetslöshet). Klicka på en rubrik för att sortera.</p>`;
   $("#compareOut").innerHTML =
     `<div class="cmp-table-wrap"><table class="cmp"><thead>${theadHtml}</thead><tbody>${tbodyHtml}</tbody></table></div>`
     + disclaimerHtml;
@@ -5633,8 +5843,8 @@ $("#patExport").addEventListener("click",()=>{
   rows.push(["Utbildningsform","Variabel","Kön","r","n","t","Säkerställt (5 %)","Avgångsår","Måttår"]);
   const addBlock = (arr, sexLbl) => arr.filter(c=>c.r!=null).forEach(c=>{
     rows.push([patFormLabel(c.form), patBarLabel(c.metric), sexLbl,
-      String(Math.round(c.r*1000)/1000).replace(".",","), c.n,
-      c.t==null?"":String(Math.round(c.t*100)/100).replace(".",","),
+      csvNum(Math.round(c.r*1000)/1000), csvNum(c.n),
+      c.t==null?"":csvNum(Math.round(c.t*100)/100),
       c.sig?"ja":"nej", c.transYear, c.metricYear]);
   });
   addBlock(cells, "Båda");
@@ -5845,16 +6055,17 @@ $("#ktExport").addEventListener("click",()=>{
     meta.form ? ["Utbildningsform:", transForm(form).label] : null,
     ["Kön:", sex==="1+2"?"Totalt":sex==="2"?"Kvinnor":"Män"],
     ["Område:", lanName],
-    ["Enhet:", meta.unit==="%"?"procent":"antal"],
+    ["Enhet:", meta.unit==="%"?"andel (0–1)":"antal"],
     ["Årtolkning:", yearInterp],
     ["Källa:", meta.source]
   ]);
   rows.push(["Län","Kommunkod","Kommun", ...allYears]);
+  const ktIsShare = meta.unit==="%";
   sorted.forEach(k=>{
     const row = [kommunToLan(k.code), k.code, k.name.replace(/s? kommun$/i,"")];
     allYears.forEach(y=>{
       const v = data[k.code]?.[y];
-      row.push(v==null ? "" : String(Math.round(v*100)/100).replace(".",","));
+      row.push(ktIsShare ? csvShare(v) : csvNum(v==null?null:Math.round(v)));
     });
     rows.push(row);
   });
