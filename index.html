@@ -90,10 +90,18 @@
     main{flex:1;min-height:0}
     main.view{flex:1;min-height:0}
   }
-  .view{display:grid;animation:viewIn .28s var(--ease)}
+  .view{display:grid;animation:viewIn .32s var(--ease-out)}
   @keyframes viewIn{
-    from{opacity:0;transform:translateY(6px)}
-    to{opacity:1;transform:translateY(0)}
+    from{opacity:0;transform:translateX(-22px)}
+    to{opacity:1;transform:translateX(0)}
+  }
+  /* Den blinkning som tidigare uppstod vid vybyte på telefon berodde inte på den
+     här animationen utan på att den valda fliken scrollades in i sidled och ryckte
+     hela sidan lodrätt (se vyväxlingslogiken). När det är åtgärdat kan en lugn,
+     ren intoning användas här utan flimmer. */
+  @media (max-width:860px){
+    .view{animation:viewInMobile .38s var(--ease)}
+    @keyframes viewInMobile{ from{opacity:0} to{opacity:1} }
   }
   @media (prefers-reduced-motion: reduce){
     .view{animation:none}
@@ -107,7 +115,6 @@
       scroll-behavior:auto !important;
     }
   }
-  #view-compare{grid-template-columns:1fr}
   #view-method{grid-template-columns:1fr}
   .method-doc{max-width:80ch;margin:0 auto;padding:8px 4px 40px;line-height:1.6;font-size:14.5px;color:var(--ink)}
   .method-title{font-size:26px;margin:0 0 6px;letter-spacing:-.01em}
@@ -156,7 +163,7 @@
   /* Energisk gradient-hero med rörlig färgvärld och brytande glasljus */
   .welcome-head{
     position:relative;overflow:hidden;flex-shrink:0;
-    padding:32px 36px 28px;
+    padding:32px 36px 18px;
     background:var(--grad-hero);
     background-size:180% 180%;
     animation:welcomeGradient 14s ease infinite;
@@ -189,7 +196,7 @@
     animation:welcomeStagger .5s var(--ease-out) .2s both;
   }
   .welcome-head h2,.welcome-title{
-    margin:0 0 12px;font-family:var(--font-display);font-size:clamp(21px,2.5vw,27px);line-height:1.18;
+    margin:0;font-family:var(--font-display);font-size:clamp(21px,2.5vw,27px);line-height:1.18;
     color:#fff;font-weight:800;letter-spacing:-.02em;max-width:26ch;
     text-shadow:0 2px 12px rgba(22,56,74,.22);
     animation:welcomeStagger .5s var(--ease-out) .3s both;
@@ -199,7 +206,7 @@
     animation:welcomeStagger .5s var(--ease-out) .42s both;
   }
   @keyframes welcomeStagger{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-  .welcome-body{padding:20px 36px;overflow-y:auto;background:#fff}
+  .welcome-body{padding:16px 36px;overflow-y:auto;background:#fff}
   .welcome-section-title{
     margin:0 0 12px;font:700 11px/1 var(--font-ui);letter-spacing:.16em;
     text-transform:uppercase;color:var(--djupbla);
@@ -208,11 +215,11 @@
   .welcome-section-title::after{content:"";flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg, var(--salvia), transparent)}
   .welcome-views{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .welcome-views li{
-    display:block;padding:11px 15px;position:relative;overflow:hidden;cursor:pointer;
-    background:linear-gradient(145deg, rgba(255,255,255,.6), rgba(238,244,241,.55));
+    display:block;padding:10px 15px;position:relative;overflow:hidden;cursor:pointer;
+    background:linear-gradient(145deg, rgba(240,250,251,.95), rgba(224,242,244,.92));
     border-radius:var(--radius);
-    border:1px solid rgba(255,255,255,.7);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 1px 3px -1px rgba(59,121,146,.08);
+    border:1px solid rgba(82,153,155,.34);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 2px 6px -2px rgba(59,121,146,.18);
     transition:transform .25s var(--ease-out), box-shadow .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease);
     animation:cardIn .5s var(--ease-out) both;
   }
@@ -230,8 +237,8 @@
   .welcome-views li:nth-child(6){animation-delay:.35s}
   @keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
   .welcome-views li::before{
-    content:"";position:absolute;left:0;top:11px;bottom:11px;width:3px;border-radius:3px;
-    background:var(--grad-green);z-index:1;
+    content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;
+    background:var(--grad-accent);z-index:1;
   }
   /* glasglimt som sveper när man hovrar ett kort */
   .welcome-views li::after{
@@ -241,12 +248,12 @@
   }
   .welcome-views li:hover{
     transform:translateY(-3px);
-    background:linear-gradient(145deg, rgba(255,255,255,.92), rgba(245,250,248,.85));
-    box-shadow:0 12px 28px -10px rgba(59,121,146,.35), inset 0 1px 0 rgba(255,255,255,.9);
-    border-color:var(--ljusgron);
+    background:linear-gradient(145deg, rgba(255,255,255,.98), rgba(240,248,244,.95));
+    box-shadow:0 12px 28px -10px rgba(59,121,146,.4), inset 0 1px 0 rgba(255,255,255,.9);
+    border-color:var(--accent);
   }
   .welcome-views li:hover::after{left:130%}
-  .wv-name{display:block;font-weight:700;color:var(--ink);font-size:13.5px;margin-bottom:2px;font-family:var(--font-ui);position:relative;z-index:1}
+  .wv-name{display:block;font-weight:700;color:var(--ink);font-size:12.5px;margin-bottom:2px;font-family:var(--font-ui);position:relative;z-index:1}
   /* Liten pil som signalerar att kortet är en genväg; glider fram vid hover. */
   .wv-name::after{
     content:"→";margin-left:6px;color:var(--accent);font-weight:800;
@@ -255,7 +262,7 @@
   }
   .welcome-views li:hover .wv-name::after,
   .welcome-views li:focus-visible .wv-name::after{opacity:1;transform:translateX(0)}
-  .wv-desc{color:var(--ink-soft);font-size:12.5px;line-height:1.45;position:relative;z-index:1}
+  .wv-desc{display:block;color:var(--ink-soft);font-size:11.5px;line-height:1.3;position:relative;z-index:1}
   .welcome-note{
     margin:10px 0 0;padding:10px 14px;
     background:var(--grad-hero-soft);
@@ -324,6 +331,28 @@
   }
   /* När markören är redo bär den gradienten; aktiv knapp blir bara vit text. */
   .cmp-mode.indicator-ready button.active{background:transparent;box-shadow:none;color:#fff}
+  /* Stående variant (i sidopanelen): två helbreda knappar på var sin rad med en
+     glidande markör – samma "slajd"-känsla som tidigare, fast lodrätt. JS sätter
+     --cm-y och --cm-h; pillen åker mjukt mellan de två lägena i höjdled. */
+  .cmp-mode-stack{display:flex;flex-direction:column;gap:5px;width:100%;border-radius:24px;padding:5px;position:relative;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.8);
+    backdrop-filter:blur(10px) saturate(1.3);
+    -webkit-backdrop-filter:blur(10px) saturate(1.3);
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.85), inset 0 -2px 4px rgba(59,121,146,.06), 0 2px 8px -3px rgba(59,121,146,.2);}
+  .cmp-mode-stack .cmp-mode-indicator{
+    display:block;position:absolute;left:5px;right:5px;top:0;width:auto;
+    height:var(--cm-h, 0);transform:translateY(var(--cm-y, 0));
+    border-radius:99px;background:var(--grad-accent);
+    box-shadow:0 4px 14px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
+    transition:transform .38s var(--ease-out), height .38s var(--ease-out);
+    z-index:0;pointer-events:none;overflow:hidden;}
+  .cmp-mode-stack button{width:100%;border-radius:99px;padding:11px 12px;font-size:12.5px;color:var(--ink);
+    background:transparent;border:none;box-shadow:none;position:relative;z-index:1;
+    transition:color .25s var(--ease);}
+  .cmp-mode-stack button:hover:not(.active){color:var(--accent);background:rgba(255,255,255,.45)}
+  .cmp-mode-stack button.active{background:transparent;box-shadow:none;color:#fff}
+  .cmp-mode-stack.indicator-ready button.active{background:transparent;box-shadow:none;color:#fff}
   .cmp-mode-hint{font-size:12px;color:var(--ink-soft);font-style:italic;max-width:42ch;line-height:1.45}
   @media(max-width:620px){ .cmp-mode-hint{flex-basis:100%} }
   .ts-controls{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:0 0 16px}
@@ -385,7 +414,21 @@
   .cmp-tip{position:fixed;z-index:200;max-width:260px;background:var(--ink);color:#fff;
     font-size:12px;line-height:1.45;font-weight:400;padding:8px 11px;border-radius:6px;
     box-shadow:var(--shadow);pointer-events:none;white-space:normal;text-align:left}
-  .corr-select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;font-size:14px;cursor:pointer}
+  .corr-select{width:100%;padding:9px 40px 9px 16px;border:1px solid transparent;border-radius:99px;font-size:14px;cursor:pointer;
+    color:var(--ink);
+    -webkit-appearance:none;-moz-appearance:none;appearance:none;
+    background-color:transparent;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1.5L7 7L13 1.5' stroke='%23456778' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, rgba(241,249,249,.95) 0%, rgba(224,239,240,.92) 100%);
+    background-repeat:no-repeat, no-repeat;
+    background-position:right 16px center, center;
+    background-size:13px auto, auto;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 1px 3px -2px rgba(59,121,146,.25);
+  }
+  .corr-select:hover{background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1.5L7 7L13 1.5' stroke='%233b7992' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, rgba(246,251,251,.97) 0%, rgba(230,243,243,.94) 100%);}
   .corr-select:focus{outline:2px solid var(--accent);outline-offset:1px}
   /* Regionprofiler */
   .prof-intro{font-size:14px;color:var(--ink-soft);max-width:70ch;margin:0 0 20px}
@@ -479,7 +522,7 @@
   /* ---------- Header ---------- */
   header{
     border-bottom:1px solid rgba(112,163,189,.38);
-    padding:16px 40px;
+    padding:11px 40px;
     background:linear-gradient(115deg, rgba(154,207,174,.42) 0%, rgba(140,195,197,.36) 45%, rgba(112,163,189,.40) 100%), rgba(251,252,251,.8);
     backdrop-filter:saturate(1.4) blur(18px);
     -webkit-backdrop-filter:saturate(1.4) blur(18px);
@@ -500,7 +543,7 @@
   .brand-home:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
   /* Höjden spänner från rubrikens överkant till vyväljarens underkant:
      rubrikhöjd + 14px (kolumnens gap) + vyväljarens höjd. */
-  .brand-logo{height:83px;width:auto;flex-shrink:0;object-fit:contain;display:block;pointer-events:none}
+  .brand-logo{height:52px;width:auto;flex-shrink:0;object-fit:contain;display:block;pointer-events:none}
   /* Rubrik och vyväljare staplas i en kolumn till höger om logotypen. */
   .brand-text{display:flex;flex-direction:column;gap:14px;justify-content:center;min-width:0;flex:1}
   h1{
@@ -548,12 +591,21 @@
      sträcka sig över hela bredden. */
   .viewnav{display:inline-flex;gap:6px;margin:0;align-self:flex-start;width:fit-content;max-width:100%;
     padding:5px;border-radius:99px;position:relative;
+    /* Behållaren ska alltid omsluta sina piller inom den rundade ytan. Får
+       innehållet inte plats scrollar det i sidled i stället för att spilla ut
+       förbi den rundade högerkanten (annars klipps sista pillret vid vissa
+       fönsterbredder). Scrollfältet döljs på desktop; ≤1080px visas ett tunt. */
+    overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;
+    scrollbar-width:none;-ms-overflow-style:none;
+    scroll-padding-inline:5px;   /* ev. programmatisk scroll respekterar paddingen */
     background:rgba(255,255,255,.6);
     border:1px solid rgba(255,255,255,.85);
     backdrop-filter:blur(14px) saturate(1.4);
     -webkit-backdrop-filter:blur(14px) saturate(1.4);
     box-shadow:inset 0 1px 1px rgba(255,255,255,.9), inset 0 -2px 4px rgba(59,121,146,.08), 0 4px 16px -4px rgba(59,121,146,.28);
   }
+  .viewnav::-webkit-scrollbar{height:0}
+  .viewnav-btn{flex-shrink:0}
   /* Glidande markör: en pill som åker mjukt till den aktiva fliken i stället
      för att markeringen hoppar. JS sätter --ind-x (vänsterposition) och
      --ind-w (bredd); allt annat sköter CSS-övergången. Ligger bakom knapparna. */
@@ -608,21 +660,28 @@
   }
   .nav-tooltip{
     position:fixed;z-index:9999;
-    background:var(--ink);color:#fff;
-    padding:10px 14px;border-radius:8px;
+    background:rgba(45,99,120,.93);color:#fff;
+    padding:10px 14px;border-radius:12px;
     max-width:300px;width:max-content;
     font:400 12px/1.5 var(--font-ui);letter-spacing:0;text-align:left;
-    box-shadow:0 8px 22px -6px rgba(22,56,74,.4), inset 0 0 0 1px rgba(255,255,255,.06);
+    box-shadow:0 10px 26px -6px rgba(22,56,74,.5), inset 0 0 0 1px rgba(255,255,255,.12);
+    backdrop-filter:blur(8px) saturate(1.2);-webkit-backdrop-filter:blur(8px) saturate(1.2);
     pointer-events:none;
     opacity:0;
     transition:opacity .12s ease-out;
   }
   .nav-tooltip.show{opacity:1}
+  /* Pil som pekar åt vänster (mot vyknappen), vertikalt placerad via --arrow-y. */
   .nav-tooltip::before{
-    content:"";position:absolute;bottom:100%;
-    left:var(--arrow-x, 50%);
-    margin-left:-6px;
-    border:6px solid transparent;border-bottom-color:var(--ink);
+    content:"";position:absolute;right:100%;
+    top:var(--arrow-y, 50%);
+    margin-top:-6px;
+    border:6px solid transparent;border-right-color:rgba(45,99,120,.93);
+  }
+  /* Reservläge: om tooltipen hamnar till vänster om knappen pekar pilen åt höger. */
+  .nav-tooltip.tip-left::before{
+    right:auto;left:100%;
+    border-right-color:transparent;border-left-color:rgba(45,99,120,.93);
   }
   /* ============================================================
      Responsiv header. Logotypen står till vänster i full höjd,
@@ -634,16 +693,14 @@
     header{padding:14px 24px}
     .viewnav{
       width:100%;
-      overflow-x:auto;overflow-y:hidden;
-      flex-wrap:nowrap;
       -webkit-overflow-scrolling:touch;
       scrollbar-width:thin;
-      scroll-snap-type:x proximity;
-      -ms-overflow-style:none;
+      /* scroll-snap medvetet bortvalt: snap-align:start lade den första knappens
+         innehållskant vid scrollnollan och åt därmed upp behållarens vänstra
+         padding (5px), så det aktiva pillret hamnade tryckt mot kanten. */
     }
     .viewnav::-webkit-scrollbar{height:5px}
     .viewnav::-webkit-scrollbar-thumb{background:rgba(59,121,146,.25);border-radius:99px}
-    .viewnav-btn{flex-shrink:0;scroll-snap-align:start}
   }
   @media (max-width:560px){
     /* På telefon läggs logotyp + rubrik överst, och vyväljaren under i full
@@ -659,7 +716,7 @@
       padding:14px 16px;
     }
     .brand-home{grid-area:logo;align-self:center}
-    .brand-logo{height:64px}
+    .brand-logo{height:44px}
     .brand-text{display:contents}
     h1{grid-area:title;font-size:16px;line-height:1.2}
     .viewnav-wrap{grid-area:nav;align-self:start}
@@ -680,14 +737,14 @@
       grid-column:span 2;               /* varje pill = halva bredden */
       display:flex;align-items:center;justify-content:center;text-align:center;
       white-space:normal;line-height:1.2;font-size:12.5px;
-      min-height:36px;                  /* alla piller exakt lika höga; rubrikerna ryms på en rad */
-      padding:5px 8px;border-radius:12px;
+      min-height:38px;                  /* alla piller exakt lika höga; rubrikerna ryms på en rad */
+      padding:6px 12px;border-radius:99px;  /* helrundade som pillren i glidläget */
       color:var(--ink-soft);
       background:rgba(255,255,255,.62);
       border:1px solid rgba(255,255,255,.85);
       backdrop-filter:blur(10px) saturate(1.3);
       -webkit-backdrop-filter:blur(10px) saturate(1.3);
-      box-shadow:inset 0 1px 1px rgba(255,255,255,.85), 0 2px 8px -3px rgba(59,121,146,.22);
+      box-shadow:inset 0 1px 1px rgba(255,255,255,.9), inset 0 -2px 4px rgba(59,121,146,.08), 0 3px 12px -4px rgba(59,121,146,.26);
     }
     /* Det nedersta pillret: de två mittersta kolumnerna → samma bredd, centrerat. */
     .viewnav-btn[data-vw="method"]{grid-column:2 / 4}
@@ -697,17 +754,17 @@
     .viewnav-btn.active,
     .viewnav.indicator-ready .viewnav-btn.active{
       background:var(--grad-accent);color:#fff;border-color:transparent;
-      box-shadow:0 3px 10px -3px rgba(59,121,146,.45), inset 0 1px 0 rgba(255,255,255,.3);
+      box-shadow:0 6px 18px -4px rgba(59,121,146,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 6px rgba(22,56,74,.15);
     }
     /* Scroll-toningarna behövs inte när allt syns – dölj dem på telefon. */
     .viewnav-wrap::before,.viewnav-wrap::after,.viewnav-scroll-hint{display:none}
   }
   /* ---------- Layout ---------- */
-  main{display:grid;grid-template-columns:340px 1fr;gap:0;overflow:hidden}
+  main{display:grid;grid-template-columns:300px 1fr;gap:0;overflow:hidden}
   @media (max-width:860px){main{grid-template-columns:1fr;height:auto;overflow:visible}}
   aside{
-    border-right:1px solid rgba(112,163,189,.32);padding:28px 26px;
-    background:linear-gradient(180deg, rgba(188,221,223,.42) 0%, rgba(190,214,226,.30) 100%), rgba(240,246,245,.92);
+    border-right:1px solid rgba(112,163,189,.32);padding:24px 22px;
+    background:linear-gradient(160deg, rgba(154,207,174,.34) 0%, rgba(140,195,197,.28) 48%, rgba(112,163,189,.34) 100%), rgba(248,251,250,.9);
     backdrop-filter:blur(10px) saturate(1.25);
     -webkit-backdrop-filter:blur(10px) saturate(1.25);
     box-shadow:inset -1px 0 0 rgba(255,255,255,.55), 3px 0 22px -8px rgba(59,121,146,.24);
@@ -718,7 +775,7 @@
      svalare sidopanelen och kroppens tonade bakgrund. Det ger tydlig
      åtskillnad mellan var man väljer data och var resultaten visas. */
   section.results{padding:28px 32px;min-width:0;overflow-y:auto;
-    background:linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(255,255,255,.82) 100%);
+    background:linear-gradient(165deg, rgba(240,247,246,.96) 0%, rgba(244,248,250,.94) 55%, rgba(236,243,247,.96) 100%);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.9);
   }
   @media (max-width:860px){section.results{background:linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.65))}}
@@ -727,28 +784,25 @@
      skulle innehåll synas i padding-fönstret ovanför thead under scroll. Vi
      nollställer därför padding-top för dessa två vyer och flyttar luften till
      första elementet i stället. */
-  #view-kommun > section.results,
-  #view-compare > section.results{
-    padding-top:0;
-  }
-  #view-kommun > section.results > *:first-child,
-  #view-compare > section.results > *:first-child{
-    padding-top:28px;
-  }
   @media (max-width:860px){section.results{overflow-y:visible}}
   .panel-title{
-    font:600 11px/1 var(--font-ui);letter-spacing:.18em;
+    font:600 11px/1.2 var(--font-ui);letter-spacing:.1em;
     text-transform:uppercase;color:var(--ink-soft);
-    margin:0 0 14px;display:flex;align-items:center;gap:8px;
+    margin:0 0 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   }
-  .panel-title::after{content:"";flex:1;height:1px;background:var(--line)}
+  .panel-title::after{content:"";flex:1 1 30px;min-width:24px;height:1px;background:var(--line)}
   .block{margin-bottom:30px}
   .block-fetch{
     position:sticky;bottom:-22px;margin-bottom:-22px;
-    background:var(--paper);
+    background:
+      linear-gradient(180deg, rgba(248,251,250,0) 0%, rgba(248,251,250,.75) 38%, rgba(248,251,250,1) 64%, rgba(248,251,250,1) 100%),
+      linear-gradient(160deg, rgba(154,207,174,.34) 0%, rgba(140,195,197,.28) 48%, rgba(112,163,189,.34) 100%),
+      rgba(248,251,250,1);
+    backdrop-filter:blur(10px) saturate(1.25);
+    -webkit-backdrop-filter:blur(10px) saturate(1.25);
     padding-top:18px;padding-bottom:24px;
-    margin-left:-26px;margin-right:-26px;padding-left:26px;padding-right:26px;
-    border-top:1px solid var(--line);
+    margin-left:-22px;margin-right:-22px;padding-left:22px;padding-right:22px;
+    border-top:1px solid rgba(112,163,189,.18);
   }
   label.fld{display:block;font-size:13px;font-weight:600;margin:0 0 6px}
   select,button,input{font-family:inherit}
@@ -802,7 +856,7 @@
   /* Liquid Glass-väljare: frostat glaslager med pillerknappar, samma språk
      som huvudnavigeringen. Behållaren är halvgenomskinlig med ljuskant; den
      aktiva knappen bär en gradient och en specular-glimt. */
-  .bs-toggle{display:flex;gap:3px;margin:0 0 8px;padding:3px;border-radius:99px;
+  .bs-toggle{display:flex;gap:4px;margin:0 0 8px;padding:5px;border-radius:21px;
     background:rgba(255,255,255,.5);
     border:1px solid rgba(255,255,255,.8);
     backdrop-filter:blur(10px) saturate(1.3);
@@ -818,7 +872,7 @@
   .bs-toggle button:hover:not(.active){color:var(--accent);background:rgba(255,255,255,.5)}
   .bs-toggle button.active{
     background:var(--grad-accent);color:#fff;border-color:transparent;
-    box-shadow:0 3px 10px -3px rgba(59,121,146,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
+    box-shadow:0 2px 6px -2px rgba(59,121,146,.4), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
   }
   /* specular-glimt som sveper över den aktiva knappen */
   .bs-toggle button.active::after{
@@ -828,13 +882,37 @@
     animation:glassSheen 5s ease-in-out 1.4s infinite;
     pointer-events:none;
   }
+  /* Lodrät variant: knapparna staplas i stället för att ligga sida vid sida och
+     får samma utseende som vy-väljarens piller – genomskinlig behållare och ljusa,
+     upphöjda knappar. Det aktiva pillret behåller den gröna gradienten. */
+  /* Stående "slajd"-variant för REGION-väljaren: ljus behållare med en glidande
+     markör som åker i höjdled mellan Län och Kommuner. JS sätter --bt-y och --bt-h. */
+  .bs-toggle-stack{flex-direction:column;border-radius:24px;gap:5px;padding:5px;position:relative;margin:0 0 8px;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.8);
+    backdrop-filter:blur(10px) saturate(1.3);
+    -webkit-backdrop-filter:blur(10px) saturate(1.3);
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.85), inset 0 -2px 4px rgba(59,121,146,.06), 0 2px 8px -3px rgba(59,121,146,.2);}
+  .bs-toggle-indicator{
+    display:block;position:absolute;left:5px;right:5px;top:0;width:auto;
+    height:var(--bt-h, 0);transform:translateY(var(--bt-y, 0));
+    border-radius:99px;background:var(--grad-accent);
+    box-shadow:0 4px 14px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
+    transition:transform .38s var(--ease-out), height .38s var(--ease-out);
+    z-index:0;pointer-events:none;overflow:hidden;}
+  .bs-toggle-stack button{flex:none;width:100%;border-radius:99px;padding:11px 12px;font-size:12.5px;color:var(--ink);
+    background:transparent;border:none;box-shadow:none;position:relative;z-index:1;overflow:visible;
+    transition:color .25s var(--ease);}
+  .bs-toggle-stack button:hover:not(.active){color:var(--accent);background:rgba(255,255,255,.45)}
+  .bs-toggle-stack button.active{background:transparent;box-shadow:none;color:#fff}
+  .bs-toggle-stack button.active::after{display:none}
   .val .bs-mini{
     font:600 9px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em;
     padding:2px 5px;border-radius:3px;text-transform:uppercase;margin-left:auto
   }
   .val .bs-mini.boende{background:#d9ecdd;color:var(--good)}
   .val .bs-mini.skola{background:#f3e9d6;color:var(--warn)}
-  .lvl-select{display:flex;gap:3px;margin:0 0 8px;flex-wrap:wrap;padding:3px;border-radius:99px;
+  .lvl-select{display:flex;gap:4px;margin:0 0 8px;flex-wrap:wrap;padding:5px;border-radius:21px;
     background:rgba(255,255,255,.5);
     border:1px solid rgba(255,255,255,.8);
     backdrop-filter:blur(10px) saturate(1.3);
@@ -850,7 +928,7 @@
   .lvl-select button:hover:not(.active){color:var(--accent);background:rgba(255,255,255,.5)}
   .lvl-select button.active{
     background:var(--grad-accent);color:#fff;border-color:transparent;
-    box-shadow:0 3px 10px -3px rgba(59,121,146,.45), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
+    box-shadow:0 2px 6px -2px rgba(59,121,146,.4), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
   }
   .lvl-select button.active::after{
     content:"";position:absolute;top:0;left:-70%;width:55%;height:100%;
@@ -860,8 +938,8 @@
     pointer-events:none;
   }
   /* Stående variant: tre helbreda piller på var sin rad (för längre etiketter). */
-  .lvl-select-stack{flex-direction:column;border-radius:16px;gap:4px}
-  .lvl-select-stack button{flex:none;width:100%;border-radius:12px;padding:9px 10px;font-size:12.5px}
+  .lvl-select-stack{flex-direction:column;border-radius:24px;gap:5px}
+  .lvl-select-stack button{flex:none;width:100%;border-radius:99px;padding:11px 12px;font-size:12.5px}
   .corr-lanpick-note{margin:6px 2px 0;font-size:11.5px;color:var(--ink-soft);line-height:1.35}
   .corr-lanpick-note.warn{color:#b3541e}
   .viewtabs{display:flex;gap:2px;margin:0 0 16px;border-bottom:2px solid var(--ink)}
@@ -943,7 +1021,7 @@
     border-radius:3px;cursor:pointer;color:var(--accent)
   }
   .btn{
-    width:100%;padding:13px;border:none;border-radius:var(--radius);
+    width:100%;padding:13px;border:none;border-radius:99px;
     background:var(--grad-accent);
     color:#fff;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.01em;
     box-shadow:0 4px 14px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.18);
@@ -967,6 +1045,16 @@
   .btn.ghost::after{display:none}
   .btn:active{transform:translateY(1px);box-shadow:0 2px 6px -2px rgba(59,121,146,.4);transition-duration:.08s}
   .btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;transform:none;filter:grayscale(.3)}
+  /* Liten vit pil till höger i knappar som visar resultat i resultatvyn,
+     motsvarande pilen i flärpen och den valda vy-pillret. */
+  .btn-go{padding-left:14px;padding-right:30px}
+  .btn-go::before{
+    content:"\2039";
+    position:absolute;top:50%;right:13px;transform:translateY(-50%) rotate(180deg);
+    font-size:16px;line-height:1;font-weight:700;color:#fff;
+    pointer-events:none;z-index:2;
+  }
+  .btn-go:disabled::before{opacity:.6}
   .btn.ghost{
     background:rgba(255,255,255,.55);color:var(--accent);border:1px solid rgba(255,255,255,.8);
     backdrop-filter:blur(10px) saturate(1.3);
@@ -1032,10 +1120,12 @@
   .tabledd{position:relative}
   .tabledd-btn{
     width:100%;display:flex;align-items:flex-start;gap:8px;text-align:left;
-    padding:9px 10px;border:1px solid var(--line);border-radius:var(--radius);
-    background:#fff;color:var(--ink);font-size:13.5px;line-height:1.35;cursor:pointer;
+    padding:12px 16px;border:1px solid transparent;border-radius:22px;
+    color:var(--ink);font-size:13.5px;line-height:1.35;cursor:pointer;
+    background:linear-gradient(180deg, rgba(241,249,249,.95) 0%, rgba(224,239,240,.92) 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 1px 3px -2px rgba(59,121,146,.25);
   }
-  .tabledd-btn:hover{border-color:var(--accent)}
+  .tabledd-btn:hover{background:linear-gradient(180deg, rgba(248,253,253,.99) 0%, rgba(236,247,247,.97) 100%);}
   .tabledd-btn:focus{outline:2px solid var(--accent);outline-offset:1px}
   #tableBtnText{flex:1}
   .tabledd-caret{color:var(--ink-soft);font-size:12px;margin-top:2px}
@@ -1055,7 +1145,229 @@
   .tabledd-opt.selected{background:var(--ink);color:#fff}
   .tabledd-opt .opt-code{font:600 10px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--accent);display:block;margin-bottom:3px;letter-spacing:.04em}
   .tabledd-opt.selected .opt-code{color:#a9d0d2}
+
+  /* ====================================================================
+     VÄNSTER VY-KOLUMN + DÖLJBARA SIDOMENYER
+     Headern ligger överst i full bredd. Under den en rad med vy-väljaren
+     längst till vänster, sedan inställningspanelen (aside i varje vy), sedan
+     resultatet. En knapp fäller in/ut både vy-väljaren och inställningspanelen
+     med mjuk animation. Strukturen finns i HTML:en (ingen JS-omflyttning).
+     ==================================================================== */
+  @media (min-width:861px){
+    html,body{height:100%}
+    body{display:flex;flex-direction:column;overflow:hidden}
+    body > header{flex-shrink:0}
+    #railRow{flex:1;display:flex;flex-direction:row;min-height:0;overflow:hidden;position:relative}
+    /* Vy-väljaren – stående kolumn längst till vänster. */
+    #navRail{
+      flex:0 0 240px;width:240px;height:100%;overflow-y:auto;flex-shrink:0;box-sizing:border-box;
+      padding:20px 14px 24px;
+      display:flex;flex-direction:column;justify-content:flex-start;
+      border-right:1px solid rgba(112,163,189,.34);
+      background:linear-gradient(160deg, rgba(154,207,174,.40) 0%, rgba(140,195,197,.34) 45%, rgba(112,163,189,.38) 100%), rgba(251,252,251,.8);
+      backdrop-filter:saturate(1.3) blur(16px);
+      -webkit-backdrop-filter:saturate(1.3) blur(16px);
+      /* Animerbar in-/utfällning: marginalen drar kolumnen åt vänster.
+         Egen kompositlager + dold baksida motverkar subtil omrastrering (flimmer). */
+      transition:margin-left .42s var(--ease-out);
+      will-change:margin-left;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    }
+    /* Pillerbehållaren ligger upptill (överkanten linjerar med tabellrutan) och får
+       fylla den tillgängliga höjden så att pillren kan dela utrymmet och krympa på
+       låga skärmar i stället för att tvinga fram scroll. */
+    #navRail .viewnav-wrap{margin:0;flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+    .rail-content{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}
+    .rail-content > main{flex:1;min-height:0}
+    main{flex:1;min-height:0}
+    /* På desktop lägger vi om vyn till flex i stället för grid. Flex-bredd går att
+       animera mjukt och pålitligt; grid-template-columns interpolerades inte jämnt
+       och gav ett litet hopp (= flimmer). Panelen och resultatet ligger sida vid
+       sida precis som förut. */
+    main.view{display:flex;flex-direction:row;flex:1;min-height:0;grid-template-columns:none}
+    main.view > aside{
+      width:300px;flex:0 0 300px;box-sizing:border-box;min-width:0;
+      overflow-x:hidden;overflow-y:auto;
+      display:flex;flex-direction:column;
+      transition:width .42s var(--ease-out), flex-basis .42s var(--ease-out), padding .42s var(--ease-out);
+      backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    }
+    /* Åtgärdsfoten (resultatknapp + CSV-export) pinnas längst ned i kolumnen så att
+       den ligger på exakt samma plats i varje vy, oavsett hur mycket innehåll som
+       finns ovanför. margin-top:auto trycker ned den; en spacer gör samma sak där
+       foten ligger nästlad (Sambandsanalys, Jämför län). */
+    main.view > aside > .block-fetch{margin-top:auto}
+    /* Jämför län har två lägespaneler i kolumnen; den synliga panelen får fylla
+       resten av höjden och trycka ned sin egen fot, så att foten hamnar på samma
+       ställe som i övriga vyer. (JS döljer en panel med inline display:none, vilket
+       går före denna regel; den synliga panelen återgår till display:flex här.) */
+    #view-compare aside #cmp-pane-matrix,
+    #view-compare aside #cmp-pane-timeseries{display:flex;flex:1 1 auto;min-height:0;flex-direction:column}
+    #view-compare aside #cmp-pane-matrix .block-fetch,
+    #view-compare aside #cmp-pane-timeseries .block-fetch{margin-top:auto}
+    main.view > aside > *{min-width:256px}
+    main.view > section.results{flex:1;min-width:0}
+
+    /* ---- Infällt läge: dölj både vy-väljare och inställningspanel ---- */
+    body.sidebar-collapsed #navRail{margin-left:-240px}
+    /* Panelens bredd (och sidopadding) krymper mjukt till 0; resultatet (flex:1)
+       breddar sig i exakt samma takt – ett enda kontinuerligt svep utan hopp. */
+    body.sidebar-collapsed main.view > aside{width:0;flex-basis:0;padding-left:0;padding-right:0;border-right-width:0;pointer-events:none}
+
+    /* ---- Döljknappen ---- */
+    #sidebarToggle{
+      position:absolute;top:50%;left:540px;z-index:30;
+      transform:translate(0,-50%);
+      width:26px;height:52px;border-radius:0 13px 13px 0;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;padding:0;
+      border:1px solid rgba(112,163,189,.32);
+      border-left-color:transparent;
+      background:rgba(255,255,255,.96);
+      color:var(--accent);
+      box-shadow:0 4px 16px -4px rgba(59,121,146,.42), inset 0 1px 0 rgba(255,255,255,.9);
+      transition:left .42s var(--ease-out), background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+      backdrop-filter:blur(8px) saturate(1.2);-webkit-backdrop-filter:blur(8px) saturate(1.2);
+    }
+    #sidebarToggle:hover{background:#fff;box-shadow:0 6px 20px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.9);transform:translate(0,-50%) scale(1.06)}
+    #sidebarToggle:active{transform:translate(0,-50%) scale(.97)}
+    #sidebarToggle .sbt-icon{font-size:16px;line-height:1;transition:transform .42s var(--ease-out);font-weight:700}
+    /* När infällt: tabben glider ut till skärmens vänsterkant (sticker fram) och pilen vänds. */
+    body.sidebar-collapsed #sidebarToggle{left:0;transform:translate(0,-50%)}
+    body.sidebar-collapsed #sidebarToggle:hover{transform:translate(0,-50%) scale(1.06)}
+    body.sidebar-collapsed #sidebarToggle:active{transform:translate(0,-50%) scale(.97)}
+    body.sidebar-collapsed #sidebarToggle .sbt-icon{transform:rotate(180deg)}
+    /* "Om data och metod" saknar inställningspanel – då finns inget att fälla in, så tabben döljs. */
+    body[data-view="method"] #sidebarToggle{display:none}
+  }
+  /* På smala skärmar (≤860px) finns ingen kolumnlayout att fälla in – knappen
+     döljs och allt staplas (hanteras nedan). */
+  @media (max-width:860px){
+    #sidebarToggle{display:none}
+    #railRow{display:block}
+    #navRail{display:block;width:100%;box-sizing:border-box;padding:14px 16px 18px;border-right:none}
+    .rail-content{display:block}
+    /* I stället för edge-bleed (negativa sidomarginaler) i den smala staplade
+       layouten – håll panelknapparna inom bredden för att undvika överspill. */
+    main.view > aside .block-fetch{margin-left:0;margin-right:0;padding-left:0;padding-right:0}
+    /* På telefon scrollar hela sidan (panelen har ingen egen höjd), så den klistrade
+       foten skulle flyta ovanpå innehållet under sig och överlappa det. Här ligger
+       den i stället statiskt i normalflödet, direkt efter panelens innehåll. */
+    main.view > aside .block-fetch{position:static;bottom:auto;margin-top:8px;margin-bottom:0;
+      padding-top:16px;padding-bottom:4px;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;}
+  }
+
+  /* ---- Vy-väljarens utseende (scopat till #navRail) ---- */
+  #navRail .rail-title{
+    font:700 10px/1 var(--font-ui);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--djupbla);margin:0 0 15px;padding:0 6px;
+  }
+  #navRail .viewnav-wrap{position:static;width:100%;max-width:none}
+  #navRail .viewnav-wrap::before,
+  #navRail .viewnav-wrap::after,
+  #navRail .viewnav-scroll-hint{display:none}
+  #navRail .viewnav{
+    position:relative;margin:0;width:100%;max-width:none;align-self:auto;
+    padding:0;border-radius:30px;
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    overflow:visible;
+  }
+  #navRail .viewnav-btn{
+    border-radius:99px;font:600 12px/1.2 var(--font-ui);white-space:normal;
+    position:relative;z-index:1;flex-shrink:0;
+    background:linear-gradient(180deg, rgba(241,249,249,.95) 0%, rgba(224,239,240,.92) 100%);
+    border:1px solid transparent;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      inset 0 -2px 3px -1px rgba(59,121,146,.12),
+      0 3px 7px -3px rgba(59,121,146,.35),
+      0 1px 2px -1px rgba(22,56,74,.16);
+    color:var(--ink);cursor:pointer;
+    transition:color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease), transform .12s var(--ease);
+  }
+  #navRail .viewnav-btn:hover:not(.active){
+    color:var(--accent);
+    background:linear-gradient(180deg, rgba(248,253,253,.99) 0%, rgba(236,247,247,.97) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,1),
+      inset 0 -2px 3px -1px rgba(59,121,146,.14),
+      0 6px 14px -4px rgba(59,121,146,.4),
+      0 1px 2px -1px rgba(22,56,74,.18);
+    transform:translateY(-1px);
+  }
+  #navRail .viewnav-btn:active:not(.active){
+    transform:translateY(0);
+    box-shadow:inset 0 1px 2px rgba(59,121,146,.18), 0 1px 3px -2px rgba(59,121,146,.3);
+  }
+  #navRail .viewnav-btn.active{
+    background:var(--grad-accent);color:#fff;border-color:transparent;
+    box-shadow:0 4px 14px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
+  }
+  #navRail .viewnav-btn.active:hover{color:#fff}
+  /* Desktop: lodrät stapel + glidande markör i höjdled. */
+  @media (min-width:861px){
+    /* Bandet fyller den tillgängliga höjden så att de sju pillren delar utrymmet
+       jämnt. På låga skärmar krymper de mjukt (med en undre gräns) i stället för
+       att tvinga fram scroll; på höga skärmar blir de luftigare. */
+    #navRail .viewnav{display:flex;flex-direction:column;align-items:stretch;gap:8px;flex:1 1 auto;min-height:0;max-height:440px}
+    #navRail .viewnav-btn{
+      flex:1 1 0;width:100%;min-height:38px;text-align:center;justify-content:center;
+      display:flex;align-items:center;padding:6px 16px;font-size:13px;
+    }
+    #navRail .viewnav-indicator{
+      display:block;position:absolute;left:0;right:0;top:0;width:auto;
+      height:var(--ind-h, 0);transform:translateY(var(--ind-y, 0));
+      border-radius:99px;background:var(--grad-accent);
+      box-shadow:0 4px 14px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 5px rgba(22,56,74,.15);
+      transition:transform .42s var(--ease-out), height .42s var(--ease-out);
+      z-index:2;pointer-events:none;overflow:hidden;
+    }
+    /* Markören glider ovanför de omarkerade pillren (z-index 2) så att den inte ser
+       ut att åka under dem. Det aktiva pillret läggs ännu högre (z-index 3) med
+       genomskinlig botten, så att dess vita text/pil syns ovanpå markören. Textens
+       färg fördröjs något så att den hinner bli vit precis när markören kommer fram
+       i stället för att blinka vit mot ljus botten under förflyttningen. */
+    #navRail .viewnav.indicator-ready .viewnav-btn.active{
+      position:relative;z-index:3;background:transparent;border-color:transparent;box-shadow:none;color:#fff;
+      transition:color .18s var(--ease) .12s;
+    }
+    /* Under pågående storleksändring stängs markörens övergång av så att den följer
+       pillren ögonblickligen i stället för att animera (släpa) efter dem. */
+    #navRail .viewnav.nav-resizing .viewnav-indicator{transition:none !important}
+    /* Liten vit pil till höger i det valda pillret, motsvarande flärpens pil. */
+    #navRail .viewnav-btn.active::after{
+      content:"\2039";
+      position:absolute;top:50%;right:12px;transform:translateY(-50%) rotate(180deg);
+      font-size:15px;line-height:1;font-weight:700;color:#fff;
+      pointer-events:none;
+    }
+  }
+  /* ≤860px: vågräta piller som radbryts i ett band, full bredd. */
+  @media (max-width:860px){
+    #navRail .rail-title{margin-bottom:8px}
+    #navRail .viewnav{display:flex;flex-direction:row;flex-wrap:wrap;gap:7px;justify-content:center;width:100%;max-width:100%;box-sizing:border-box}
+    #navRail .viewnav-indicator{display:none !important}
+    #navRail .viewnav-btn{
+      flex:1 1 auto;min-width:130px;text-align:center;justify-content:center;
+      padding:9px 16px;min-height:38px;display:flex;align-items:center;
+      background:rgba(255,255,255,.62);
+      border:1px solid rgba(255,255,255,.85);
+      box-shadow:inset 0 1px 1px rgba(255,255,255,.9), 0 2px 8px -3px rgba(59,121,146,.2);
+    }
+    #navRail .viewnav-btn:hover:not(.active){background:rgba(255,255,255,.85);border-color:rgba(82,153,155,.45);color:var(--accent)}
+    #navRail .viewnav-btn.active,
+    #navRail .viewnav.indicator-ready .viewnav-btn.active{
+      background:var(--grad-accent) !important;color:#fff !important;border-color:transparent !important;
+      box-shadow:0 4px 14px -4px rgba(59,121,146,.5), inset 0 1px 0 rgba(255,255,255,.3) !important;
+    }
+  }
+  @media (max-width:560px){
+    #navRail .viewnav{display:flex !important;grid-template-columns:none !important;background:rgba(255,255,255,.55) !important;border:1px solid rgba(255,255,255,.8) !important;padding:5px !important}
+    #navRail .viewnav-btn{grid-column:auto !important}
+  }
 </style>
+<style id="vb-marker">/* kombination: vänsterkolumn + döljbara sidomenyer */</style>
 </head>
 <body>
 <a href="#huvudinnehall" class="skip-link">Hoppa till innehållet</a>
@@ -1088,6 +1400,11 @@
   <button class="brand-home" id="brandHome" aria-label="Till Hämta tabeller (startvy)" title="Till startvyn"><img class="brand-logo" src="data:image/png;base64,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" alt="Strategirådet"></button>
   <div class="brand-text">
     <h1>Övergångar från gymnasieskola till eftergymnasiala utbildningar</h1>
+  </div>
+</header>
+<span id="huvudinnehall" tabindex="-1"></span>
+<div id="railRow">
+  <aside id="navRail">
     <div class="viewnav-wrap" id="viewnavWrap">
     <nav class="viewnav" id="viewnav" role="tablist" aria-label="Analysvyer">
     <span class="viewnav-indicator" aria-hidden="true"></span>
@@ -1101,9 +1418,11 @@
   </nav>
   <span class="viewnav-scroll-hint" aria-hidden="true">›</span>
   </div>
-  </div>
-</header>
-<span id="huvudinnehall" tabindex="-1"></span>
+  </aside>
+  <button id="sidebarToggle" type="button" aria-label="Dölj sidomenyerna" aria-expanded="true" title="Dölj sidomenyerna">
+    <span class="sbt-icon" aria-hidden="true">‹</span>
+  </button>
+  <div class="rail-content">
 
 <main id="view-explore" class="view active">
   <aside>
@@ -1123,7 +1442,8 @@
     </div>
     <div class="block block-fetch">
       <p class="panel-title">3 · Hämta</p>
-      <button class="btn" id="runBtn" disabled>Hämta data</button>
+      <button class="btn btn-go" id="runBtn" disabled>Hämta data</button>
+      <button class="btn ghost" id="csvBtn" disabled style="width:100%;margin-top:8px">Exportera CSV</button>
     </div>
   </aside>
 
@@ -1152,71 +1472,72 @@
       <p class="chart-note" id="chartNote"></p>
     </div>
     <p class="cells-est" id="cellsEst"></p>
-    <div class="toolbar" style="margin-top:18px">
-      <button class="btn ghost" id="csvBtn" disabled>Exportera CSV</button>
-      <button class="btn ghost" id="copyBtn" disabled>Kopiera tabell</button>
-    </div>
   </section>
 </main>
 
 <!-- ===================== Regionprofiler ===================== -->
 <main id="view-kommun" class="view" style="display:none">
-  <section class="results" style="grid-column:1/-1">
+  <aside>
+    <div class="block">
+      <p class="panel-title">Välj län</p>
+      <select id="ktLan" class="corr-select"></select>
+    </div>
+    <div class="block">
+      <p class="panel-title">Välj variabel</p>
+      <select id="ktVar" class="corr-select">
+        <optgroup label="Övergångar till vidare studier, andel">
+          <option value="t:a1">Andel övergångar inom 1 år</option>
+          <option value="t:a3" selected>Andel övergångar inom 3 år</option>
+          <option value="t:a5">Andel övergångar inom 5 år</option>
+          <option value="t:a10">Andel övergångar inom 10 år</option>
+        </optgroup>
+        <optgroup label="Övergångar till vidare studier, antal">
+          <option value="n:tot">Antal examinerade totalt</option>
+          <option value="n:n1">Antal övergångar inom 1 år</option>
+          <option value="n:n3">Antal övergångar inom 3 år</option>
+          <option value="n:n5">Antal övergångar inom 5 år</option>
+        </optgroup>
+        <optgroup label="Gymnasiebakgrund">
+          <option value="m:hogforb">Högskoleförberedande gymnasieprogram</option>
+        </optgroup>
+        <optgroup label="Arbetsmarknad">
+          <option value="b:sysselsattningsgrad">Sysselsättningsgrad 20–64 år</option>
+          <option value="b:arbetsloshet">Arbetslöshet 20–64 år</option>
+          <option value="b:studerande">Antal studerande 20–64 år</option>
+          <option value="m:utb">Utbildningsnivå (eftergymn. 3 år+)</option>
+          <option value="m:hog">Jobb som kräver högskoleutbildning</option>
+          <option value="m:hoglag">Jobb utan krav på högskoleutbildning</option>
+          <option value="m:tjanst">Sysselsatta i tjänstesektorn</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="block" id="ktFormWrap">
+      <p class="panel-title">Välj utbildningsform</p>
+      <select id="ktForm" class="corr-select">
+        <option value="total">Samtliga eftergymnasiala</option>
+        <option value="hogskola">Högskola</option>
+        <option value="yrkesh">Yrkeshögskola</option>
+        <option value="folkh">Folkhögskola</option>
+        <option value="konst">Konst- och kulturutbildningar</option>
+      </select>
+    </div>
+    <div class="block">
+      <p class="panel-title">Välj kön</p>
+      <select id="ktSex" class="corr-select">
+        <option value="1+2" selected>Totalt</option>
+        <option value="2">Kvinnor</option>
+        <option value="1">Män</option>
+      </select>
+    </div>
+    <div class="block block-fetch">
+      <button class="btn btn-go" id="ktRun" style="width:100%">Visa tabell</button>
+      <button class="btn ghost" id="ktExport" disabled style="width:100%;margin-top:8px">Exportera CSV</button>
+    </div>
+  </aside>
+  <section class="results">
     <h3 class="prof-h" style="margin-top:0">Kommuntabeller
-      <button class="info-btn" aria-label="Mer information om vyn" data-info="Snabbtabell över ett läns kommuner för en vald variabel. Varje kommun är en rad, åren visas som kolumner. För övergångsmått väljs även utbildningsform. Källhänvisning visas under tabellen.">i</button>
     </h3>
     <p class="prof-sub">Välj län och variabel för att snabbt få fram statistik över samtliga kommuner i länet.</p>
-    <div class="kt-controls">
-      <label class="cmp-form-label">Län
-        <select id="ktLan" class="corr-select"></select>
-      </label>
-      <label class="cmp-form-label">Variabel
-        <select id="ktVar" class="corr-select">
-          <optgroup label="Övergångar till vidare studier, andel">
-            <option value="t:a1">Andel övergångar inom 1 år</option>
-            <option value="t:a3" selected>Andel övergångar inom 3 år</option>
-            <option value="t:a5">Andel övergångar inom 5 år</option>
-            <option value="t:a10">Andel övergångar inom 10 år</option>
-          </optgroup>
-          <optgroup label="Övergångar till vidare studier, antal">
-            <option value="n:tot">Antal examinerade totalt</option>
-            <option value="n:n1">Antal övergångar inom 1 år</option>
-            <option value="n:n3">Antal övergångar inom 3 år</option>
-            <option value="n:n5">Antal övergångar inom 5 år</option>
-          </optgroup>
-          <optgroup label="Gymnasiebakgrund">
-            <option value="m:hogforb">Högskoleförberedande gymnasieprogram</option>
-          </optgroup>
-          <optgroup label="Arbetsmarknad">
-            <option value="b:sysselsattningsgrad">Sysselsättningsgrad 20–64 år</option>
-            <option value="b:arbetsloshet">Arbetslöshet 20–64 år</option>
-            <option value="b:studerande">Antal studerande 20–64 år</option>
-            <option value="m:utb">Utbildningsnivå (eftergymn. 3 år+)</option>
-            <option value="m:hog">Jobb som kräver högskoleutbildning</option>
-            <option value="m:hoglag">Jobb utan krav på högskoleutbildning</option>
-            <option value="m:tjanst">Sysselsatta i tjänstesektorn</option>
-          </optgroup>
-        </select>
-      </label>
-      <label class="cmp-form-label" id="ktFormWrap">Utbildningsform
-        <select id="ktForm" class="corr-select">
-          <option value="total">Samtliga eftergymnasiala</option>
-          <option value="hogskola">Högskola</option>
-          <option value="yrkesh">Yrkeshögskola</option>
-          <option value="folkh">Folkhögskola</option>
-          <option value="konst">Konst- och kulturutbildningar</option>
-        </select>
-      </label>
-      <label class="cmp-form-label">Kön
-        <select id="ktSex" class="corr-select">
-          <option value="1+2" selected>Båda könen</option>
-          <option value="2">Kvinnor</option>
-          <option value="1">Män</option>
-        </select>
-      </label>
-      <button class="btn" id="ktRun">Visa tabell</button>
-      <button class="btn ghost" id="ktExport" disabled>Exportera CSV</button>
-    </div>
     <p id="ktSource" class="kt-source"></p>
     <div id="ktOut">
       <div class="placeholder">Välj län och variabel och klicka "Visa tabell".</div>
@@ -1227,8 +1548,9 @@
 <main id="view-profile" class="view" style="display:none">
   <aside>
     <div class="block">
-      <p class="panel-title">Region</p>
-      <div class="bs-toggle" id="profLevel" style="margin-bottom:10px">
+      <p class="panel-title">Välj nivå</p>
+      <div class="bs-toggle bs-toggle-stack" id="profLevel" style="margin-bottom:10px">
+        <span class="bs-toggle-indicator" aria-hidden="true"></span>
         <button data-level="lan" class="active">Län</button>
         <button data-level="kommun">Kommuner</button>
       </div>
@@ -1241,7 +1563,7 @@
       </div>
     </div>
     <div class="block">
-      <p class="panel-title">Utbildningsform</p>
+      <p class="panel-title">Välj utbildningsform</p>
       <select id="profForm" class="corr-select">
         <option value="total">Samtliga eftergymnasiala</option>
         <option value="hogskola">Högskola</option>
@@ -1250,9 +1572,9 @@
         <option value="konst">Konst- och kulturutbildningar</option>
       </select>
     </div>
-    <div class="block">
-      <button class="btn ghost" id="profExport" disabled style="width:100%">Exportera CSV</button>
-      <button class="info-btn" aria-label="Mer information om vyn" data-info="Profilen visar regionens övergångar och arbetsmarknadsläge, samt hur regionen rangordnas mot övriga län eller kommuner. Snittet är ett ovägt medelvärde av regionerna. Antalsuppgifterna hjälper att bedöma hur robust en andel är i små kommuner." style="margin-top:10px">i</button>
+    <div class="block-fetch">
+      <button class="btn btn-go" id="profRun" disabled style="width:100%">Visa profil</button>
+      <button class="btn ghost" id="profExport" disabled style="width:100%;margin-top:8px">Exportera CSV</button>
     </div>
   </aside>
   <section class="results">
@@ -1266,11 +1588,11 @@
 <main id="view-correlate" class="view" style="display:none">
   <aside>
     <div class="block">
-      <p class="panel-title">Variabel X</p>
+      <p class="panel-title">Välj variabel X</p>
       <select id="corrX" class="corr-select"></select>
-      <p class="panel-title" style="margin-top:22px">Variabel Y</p>
+      <p class="panel-title" style="margin-top:22px">Välj variabel Y</p>
       <select id="corrY" class="corr-select"></select>
-      <p class="panel-title" style="margin-top:22px">Utbildningsform <span style="font-weight:400;color:var(--ink-soft)">(för övergångsmått)</span></p>
+      <p class="panel-title" style="margin-top:22px">Välj utbildningsform <span style="font-weight:400;color:var(--ink-soft);text-transform:none;letter-spacing:.01em;font-size:10px;white-space:nowrap">(för övergångsmått)</span></p>
       <select id="corrForm" class="corr-select">
         <option value="total">Samtliga eftergymnasiala</option>
         <option value="hogskola">Högskola</option>
@@ -1278,13 +1600,13 @@
         <option value="folkh">Folkhögskola</option>
         <option value="konst">Konst- och kulturutbildningar</option>
       </select>
-      <p class="panel-title" style="margin-top:22px">Kön <span style="font-weight:400;color:var(--ink-soft)">(för övergångsmått)</span></p>
+      <p class="panel-title" style="margin-top:22px">Välj kön <span style="font-weight:400;color:var(--ink-soft);text-transform:none;letter-spacing:.01em;font-size:10px;white-space:nowrap">(för övergångsmått)</span></p>
       <select id="corrSex" class="corr-select">
-        <option value="1+2" selected>Båda könen</option>
+        <option value="1+2" selected>Totalt</option>
         <option value="2">Kvinnor</option>
         <option value="1">Män</option>
       </select>
-      <p class="panel-title" style="margin-top:22px">Regionnivå</p>
+      <p class="panel-title" style="margin-top:22px">Välj regionnivå</p>
       <div class="lvl-select lvl-select-stack" id="corrLevel">
         <button data-lvl="lan" class="active">Samtliga län</button>
         <button data-lvl="kommun">Samtliga kommuner</button>
@@ -1294,14 +1616,13 @@
         <select id="corrLanSel" class="corr-select"></select>
         <p class="corr-lanpick-note" id="corrLanCount"></p>
       </div>
-      <p class="panel-title" style="margin-top:22px">År</p>
+      <p class="panel-title" style="margin-top:22px">Välj år</p>
       <select id="corrYear" class="corr-select"></select>
       <p class="corr-yearhint">För övergångar avses avgångsår (vårterminens år då kullen tog examen, t.ex. 2019 = läsåret 2018/2019).</p>
-      <div class="block-fetch" style="margin-top:22px">
-        <button class="btn" id="corrRun">Visa samband</button>
-        <button class="btn ghost" id="corrExport" disabled style="margin-top:8px">Exportera CSV</button>
-        <button class="info-btn" aria-label="Mer information om vyn" data-info="Varje punkt är en region. Linjen är en linjär regression; r visar sambandets styrka och riktning, r² hur stor del av variationen i y som följer x. Samband är inte orsak. Årslistan visar bara år där båda måtten har data." style="margin-top:8px">i</button>
-      </div>
+    </div>
+    <div class="block-fetch">
+      <button class="btn btn-go" id="corrRun">Visa samband</button>
+      <button class="btn ghost" id="corrExport" disabled style="margin-top:8px">Exportera CSV</button>
     </div>
   </aside>
   <section class="results">
@@ -1313,65 +1634,70 @@
 
 <!-- ===================== Jämför län ===================== -->
 <main id="view-compare" class="view" style="display:none">
-  <section class="results" style="grid-column:1/-1">
-    <div class="cmp-mode-row">
-      <span class="cmp-mode-label">Välj vy:</span>
-      <div class="cmp-mode" id="cmpMode" role="tablist" aria-label="Välj vy i Jämför län">
+  <aside>
+    <div class="block">
+      <p class="panel-title">Välj vy</p>
+      <div class="cmp-mode cmp-mode-stack" id="cmpMode" role="tablist" aria-label="Välj vy i Jämför län">
         <span class="cmp-mode-indicator" aria-hidden="true"></span>
         <button data-mode="matrix" class="active" role="tab" aria-selected="true">Länsöversikt</button>
         <button data-mode="timeseries" role="tab" aria-selected="false">Utveckling över tid</button>
       </div>
-      <span class="cmp-mode-hint">• Länsöversikt: alla övergångs- och arbetsmarknadsmått för samtliga län ett valt år.<br>• Utveckling över tid: de examinerades övergång till vidare studier i respektive län genom åren.</span>
     </div>
 
     <div id="cmp-pane-matrix">
-      <p class="prof-sub">Samtliga län sida vid sida för övergångar och arbetsmarknadsmått. Övergångskolumnerna avser vald utbildningsform. Klicka på en kolumnrubrik för att sortera.</p>
-      <div class="cmp-bar">
-        <div class="cmp-bar-left">
-          <button class="btn" id="cmpRun">Hämta och jämför alla län</button>
-          <label class="cmp-form-label">Utbildningsform
-            <select id="cmpForm" class="corr-select">
-              <option value="total">Samtliga eftergymnasiala</option>
-              <option value="hogskola">Högskola</option>
-              <option value="yrkesh">Yrkeshögskola</option>
-              <option value="folkh">Folkhögskola</option>
-              <option value="konst">Konst- och kulturutbildningar</option>
-            </select>
-          </label>
-        </div>
-        <div class="cmp-bar-right">
-          <button class="btn ghost" id="cmpExport" disabled>Exportera CSV</button>
-          <button class="info-btn" aria-label="Mer information om vyn" data-info="Matrisen visar alla län och samtliga mått sida vid sida. Övergångskolumnerna avser vald utbildningsform. Varje kolumn färgas per mått (grönt = gynnsamt för regionen, omvänt för arbetslöshet). Året under rubriken visar vilket år värdena avser. För övergångsmått är det avgångsår (vårterminens år då kullen tog examen, t.ex. 2019 = läsåret 2018/2019); för arbetsmarknadsmått är det kalenderår.">i</button>
-        </div>
+      <div class="block">
+        <p class="panel-title">Välj utbildningsform</p>
+        <select id="cmpForm" class="corr-select">
+          <option value="total">Samtliga eftergymnasiala</option>
+          <option value="hogskola">Högskola</option>
+          <option value="yrkesh">Yrkeshögskola</option>
+          <option value="folkh">Folkhögskola</option>
+          <option value="konst">Konst- och kulturutbildningar</option>
+        </select>
       </div>
-      <div id="compareOut">
-        <div class="placeholder">Klicka ovan för att bygga jämförelsetabellen över alla län.</div>
+      <div class="block block-fetch">
+        <button class="btn btn-go" id="cmpRun" style="width:100%">Hämta och jämför alla län</button>
+        <button class="btn ghost" id="cmpExport" disabled style="width:100%;margin-top:8px">Exportera CSV</button>
       </div>
     </div>
 
     <div id="cmp-pane-timeseries" style="display:none">
-      <p class="prof-sub">Andel av de gymnasieexaminerade i respektive län som påbörjat eftergymnasiala studier, följt över tid. Välj utbildningsform och uppföljningstid, och kryssa för de län du vill visa.</p>
-      <div class="ts-controls">
-        <label class="cmp-form-label">Utbildningsform
-          <select id="tsForm" class="corr-select">
-            <option value="total">Samtliga eftergymnasiala</option>
-            <option value="hogskola">Högskola</option>
-            <option value="yrkesh">Yrkeshögskola</option>
-            <option value="folkh">Folkhögskola</option>
-            <option value="konst">Konst- och kulturutbildningar</option>
-          </select>
-        </label>
-        <label class="cmp-form-label">Uppföljningstid
-          <select id="tsHorizon" class="corr-select">
-            <option value="a1">Inom 1 år</option>
-            <option value="a3" selected>Inom 3 år</option>
-            <option value="a5">Inom 5 år</option>
-            <option value="a10">Inom 10 år</option>
-          </select>
-        </label>
-        <button class="btn" id="tsRun">Visa utveckling</button>
-        <button class="btn ghost" id="tsExport" disabled>Exportera CSV</button>
+      <div class="block">
+        <p class="panel-title">Välj utbildningsform</p>
+        <select id="tsForm" class="corr-select">
+          <option value="total">Samtliga eftergymnasiala</option>
+          <option value="hogskola">Högskola</option>
+          <option value="yrkesh">Yrkeshögskola</option>
+          <option value="folkh">Folkhögskola</option>
+          <option value="konst">Konst- och kulturutbildningar</option>
+        </select>
       </div>
+      <div class="block">
+        <p class="panel-title">Välj uppföljningstid</p>
+        <select id="tsHorizon" class="corr-select">
+          <option value="a1">Inom 1 år</option>
+          <option value="a3" selected>Inom 3 år</option>
+          <option value="a5">Inom 5 år</option>
+          <option value="a10">Inom 10 år</option>
+        </select>
+      </div>
+      <div class="block block-fetch">
+        <button class="btn btn-go" id="tsRun" style="width:100%">Visa utveckling</button>
+        <button class="btn ghost" id="tsExport" disabled style="width:100%;margin-top:8px">Exportera CSV</button>
+      </div>
+    </div>
+  </aside>
+  <section class="results">
+    <h3 class="prof-h" style="margin-top:0">Jämför län
+    </h3>
+    <div id="cmp-out-matrix">
+      <p class="prof-sub">Samtliga län sida vid sida för övergångar och arbetsmarknadsmått. Övergångskolumnerna avser vald utbildningsform. Klicka på en kolumnrubrik för att sortera.</p>
+      <div id="compareOut">
+        <div class="placeholder">Klicka "Hämta och jämför alla län" till vänster för att bygga jämförelsetabellen.</div>
+      </div>
+    </div>
+    <div id="cmp-out-timeseries" style="display:none">
+      <p class="prof-sub">Andel av de gymnasieexaminerade i respektive län som påbörjat eftergymnasiala studier, följt över tid. Välj utbildningsform och uppföljningstid till vänster, och kryssa för de län du vill visa.</p>
       <div class="ts-body">
         <div id="tsRegionPick" class="ts-region-pick"></div>
         <div id="tsChartWrap" class="ts-chart-wrap">
@@ -1384,28 +1710,31 @@
 
 <!-- ===================== Om data och metod ===================== -->
 <main id="view-patterns" class="view" style="display:none">
-  <section class="results" style="grid-column:1/-1">
+  <aside>
+    <div class="block">
+      <p class="panel-title">Välj regionnivå</p>
+      <select id="patLevel" class="corr-select">
+        <option value="lan" selected>Län (21 st, snabbt)</option>
+        <option value="kommun">Kommuner (290 st, tar längre tid)</option>
+      </select>
+    </div>
+    <div class="block">
+      <p class="panel-title">Välj uppföljningstid</p>
+      <select id="patHorizon" class="corr-select">
+        <option value="a1">Inom 1 år</option>
+        <option value="a3" selected>Inom 3 år</option>
+        <option value="a5">Inom 5 år</option>
+      </select>
+    </div>
+    <div class="block block-fetch">
+      <button class="btn btn-go" id="patRun" style="width:100%">Kör analys</button>
+      <button class="btn ghost" id="patExport" disabled style="width:100%;margin-top:8px">Exportera CSV</button>
+    </div>
+  </aside>
+  <section class="results">
     <h3 class="prof-h" style="margin-top:0">Automatisk analys
-      <button class="info-btn" aria-label="Mer information om vyn" data-info="Analysen korrelerar övergångsandelen för varje utbildningsform mot regionernas arbetsmarknadsvariabler och lyfter automatiskt fram de starkaste mönstren, inklusive kontraster mellan utbildningsformer. Samvariation är inte orsakssamband.">i</button>
     </h3>
     <p class="prof-sub">Vilka arbetsmarknadsvariabler samvarierar med övergången till olika former av högre utbildning? Analysen körs live mot SCB:s API och texterna genereras automatiskt ur resultaten.</p>
-    <div class="ts-controls">
-      <label class="cmp-form-label">Regionnivå
-        <select id="patLevel" class="corr-select">
-          <option value="lan" selected>Län (21 st, snabbt)</option>
-          <option value="kommun">Kommuner (290 st, tar längre tid)</option>
-        </select>
-      </label>
-      <label class="cmp-form-label">Uppföljningstid
-        <select id="patHorizon" class="corr-select">
-          <option value="a1">Inom 1 år</option>
-          <option value="a3" selected>Inom 3 år</option>
-          <option value="a5">Inom 5 år</option>
-        </select>
-      </label>
-      <button class="btn" id="patRun">Kör analys</button>
-      <button class="btn ghost" id="patExport" disabled>Exportera CSV</button>
-    </div>
     <div id="patternsOut">
       <div class="placeholder">Välj nivå och uppföljningstid och klicka "Kör analys". Analysen hämtar övergångar för samtliga utbildningsformer och alla arbetsmarknadsmått, korrelerar dem och sammanfattar mönstren i text.</div>
     </div>
@@ -2074,25 +2403,44 @@ const renameVar = (code, text) => /contentscode/i.test(code) ? "Övergångar" : 
 
 // ---- Vy-växling (Utforska / Regionprofiler / Sambandsanalys) ----
 let currentView = "explore";
+document.body.dataset.view = "explore";
 
 // Glidande markör i navigeringen: mät den aktiva knappen och flytta pillen dit.
 // Positionen räknas relativt nav-behållarens innehåll, så det fungerar även
 // när navigeringen scrollar horisontellt på mobil.
 const viewnavEl = document.getElementById("viewnav");
-function moveNavIndicator(){
+// instant=true uppdaterar markören utan CSS-övergång. Används när layouten byter
+// mellan telefonens rutnät (markören dold) och det bredare glidande läget — då
+// ska markören snäppa direkt till rätt bredd i stället för att animera från den
+// gamla rutnätsbredden, vilket annars syns som ett för långt piller en kort stund.
+function moveNavIndicator(instant){
   if(!viewnavEl) return;
   const active = viewnavEl.querySelector(".viewnav-btn.active");
   if(!active) return;
-  // offsetLeft är relativt nav (positioneringskontext), opåverkat av scroll
-  viewnavEl.style.setProperty("--ind-x", active.offsetLeft + "px");
-  viewnavEl.style.setProperty("--ind-w", active.offsetWidth + "px");
-  viewnavEl.classList.add("indicator-ready");
+  const ind = viewnavEl.querySelector(".viewnav-indicator");
+  const apply = ()=>{
+    viewnavEl.style.setProperty("--ind-x", active.offsetLeft + "px");
+    viewnavEl.style.setProperty("--ind-w", active.offsetWidth + "px");
+    viewnavEl.style.setProperty("--ind-y", active.offsetTop + "px");
+    viewnavEl.style.setProperty("--ind-h", active.offsetHeight + "px");
+    viewnavEl.classList.add("indicator-ready");
+  };
+  if(instant && ind){
+    const prev = ind.style.transition;
+    ind.style.transition = "none";
+    apply();
+    void ind.offsetWidth;           // tvinga reflow så att "ingen övergång" hinner gälla
+    ind.style.transition = prev;    // återställ övergången för kommande klick
+    return;
+  }
+  apply();
 }
 
 document.querySelectorAll(".viewnav-btn").forEach(b=>{
   b.addEventListener("click",()=>{
     const vw=b.dataset.vw;
     currentView=vw;
+    document.body.dataset.view = vw;
     document.querySelectorAll(".viewnav-btn").forEach(x=>{
       const on = x===b;
       x.classList.toggle("active", on);
@@ -2102,8 +2450,13 @@ document.querySelectorAll(".viewnav-btn").forEach(b=>{
       m.style.display = (m.id==="view-"+vw) ? "" : "none";
     });
     moveNavIndicator();
-    // se till att den valda fliken är synlig om navigeringen scrollar (mobil)
-    b.scrollIntoView({inline:"nearest", block:"nearest"});
+    // Se till att den valda fliken är synlig om navigeringsbandet scrollar i sidled.
+    // På telefon radbryts pillren i ett band (inget sidledsscroll), och ett
+    // scrollIntoView med block:"nearest" rycker då hela sidan lodrätt – det är det
+    // som upplevdes som en blinkning vid vybyte. Scrolla därför bara fram pillret
+    // när bandet faktiskt kan scrollas i sidled, och bara i sidled (inline).
+    const navScrolls = viewnavEl && viewnavEl.scrollWidth > viewnavEl.clientWidth + 1;
+    if(navScrolls) b.scrollIntoView({inline:"nearest", block:"nearest"});
     onViewActivated(vw);
   });
 });
@@ -2123,8 +2476,60 @@ moveNavIndicator();
     if(navBtn) navBtn.click();
   });
 })();
+// Döljknapp: fäller in/ut både vy-väljaren och inställningspanelen (mjuk CSS-
+// animation via klassen sidebar-collapsed). Knappen sitter kvar och sticker
+// fram så att samma knapp tar fram menyerna igen.
+(function setupSidebarToggle(){
+  const btn = document.getElementById("sidebarToggle");
+  if(!btn) return;
+  btn.addEventListener("click", ()=>{
+    const collapsed = document.body.classList.toggle("sidebar-collapsed");
+    btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    const label = collapsed ? "Visa sidomenyerna" : "Dölj sidomenyerna";
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("title", label);
+  });
+})();
+// Vy-väljaren ligger nu i en stående kolumn; mät om markören efter att layouten
+// satt sig (annars kan höjd/position bli fel första gången).
+if(typeof moveNavIndicator === "function"){
+  requestAnimationFrame(()=> requestAnimationFrame(()=> moveNavIndicator(true)));
+  setTimeout(()=> moveNavIndicator(true), 200);
+}
 let navResizeTimer;
-window.addEventListener("resize", ()=>{ clearTimeout(navResizeTimer); navResizeTimer = setTimeout(()=>{ moveNavIndicator(); moveCmpIndicator(); updateNavScrollHints(); }, 80); });
+window.addEventListener("resize", ()=>{
+  if(viewnavEl) viewnavEl.classList.add("nav-resizing");   // stäng av markörens övergång medan man drar
+  clearTimeout(navResizeTimer);
+  navResizeTimer = setTimeout(()=>{
+    moveNavIndicator(true); moveCmpIndicator(); moveProfLevelIndicator(true); updateNavScrollHints();
+    if(viewnavEl) viewnavEl.classList.remove("nav-resizing");  // återställ mjuk animation för kommande klick
+  }, 120);
+});
+// Markören är ett separat absolutpositionerat element vars höjd/läge sätts i JS.
+// När pillren flexar om vid storleksändring (de delar tillgänglig höjd) hinner
+// markören annars inte med förrän resize-debouncen löst ut, vilket syns som att
+// det markerade pillret hamnar fel under tiden man drar. En ResizeObserver på
+// vyväljaren uppdaterar markören direkt (utan övergång) vid varje storleksändring,
+// så att den hela tiden ligger limmad mot den aktiva knappen.
+if(typeof ResizeObserver !== "undefined" && viewnavEl){
+  let navRO_raf = 0;
+  const navRO = new ResizeObserver(()=>{
+    if(navRO_raf) return;            // koalescera flera observationer till en uppdatering per frame
+    navRO_raf = requestAnimationFrame(()=>{ navRO_raf = 0; moveNavIndicator(true); });
+  });
+  navRO.observe(viewnavEl);
+  // Observera även knapparna själva: deras höjd ändras när bandet flexar om.
+  viewnavEl.querySelectorAll(".viewnav-btn").forEach(b=> navRO.observe(b));
+}
+// När layouten korsar 560px-gränsen byter vyväljaren mellan telefonens rutnät
+// (markör dold) och det glidande läget. Vi snäpper markören direkt vid bytet så
+// att den aldrig animerar från rutnätets bredd och syns som ett för långt piller.
+if(window.matchMedia){
+  const navBP = window.matchMedia("(max-width:560px)");
+  const onBP = ()=>{ requestAnimationFrame(()=> moveNavIndicator(true)); };
+  if(navBP.addEventListener) navBP.addEventListener("change", onBP);
+  else if(navBP.addListener) navBP.addListener(onBP);   // äldre webbläsare
+}
 
 // Scrollindikatorer: visar toningar i navigeringens kanter när det finns fler
 // vyer att scrolla till (särskilt på mobil där allt inte får plats). Toningen
@@ -2193,21 +2598,31 @@ document.addEventListener("keydown",e=>{
   const show = btn => {
     activeBtn = btn;
     tt.textContent = btn.dataset.tooltip;
-    // Mät bredd och positionera; tooltipen är alltid i DOM (opacity:0) så
-    // offsetWidth fungerar direkt utan att tvinga reflow.
+    // Mät bredd/höjd och positionera till HÖGER om vyknappen, vertikalt centrerad.
+    // tooltipen är alltid i DOM (opacity:0) så offset-måtten fungerar direkt.
     const rect = btn.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const margin = 8;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const margin = 8, gap = 12;
     const ttW = Math.min(300, tt.offsetWidth);
-    // ideal centrerad position under knappen
-    let left = rect.left + rect.width/2 - ttW/2;
-    if(left < margin) left = margin;
-    else if(left + ttW > vw - margin) left = vw - margin - ttW;
-    // pilens position relativt tooltipens vänsterkant (pekar mot knappens mitt)
-    const arrowX = Math.max(12, Math.min(ttW-12, (rect.left + rect.width/2) - left));
+    const ttH = tt.offsetHeight;
+    // Till höger om knappen; om det inte får plats (smal skärm) hamnar den till vänster.
+    let left = rect.right + gap;
+    let placeLeft = false;
+    if(left + ttW > vw - margin){
+      const altLeft = rect.left - gap - ttW;
+      if(altLeft >= margin){ left = altLeft; placeLeft = true; }
+      else { left = Math.max(margin, vw - margin - ttW); }
+    }
+    // vertikalt centrerad mot knappen, klippt till skärmen
+    let top = rect.top + rect.height/2 - ttH/2;
+    if(top < margin) top = margin;
+    else if(top + ttH > vh - margin) top = vh - margin - ttH;
+    // pilens vertikala position relativt tooltipens överkant (pekar mot knappens mitt)
+    const arrowY = Math.max(14, Math.min(ttH-14, (rect.top + rect.height/2) - top));
     tt.style.left = left + "px";
-    tt.style.top = (rect.bottom + 10) + "px";
-    tt.style.setProperty("--arrow-x", arrowX + "px");
+    tt.style.top = top + "px";
+    tt.style.setProperty("--arrow-y", arrowY + "px");
+    tt.classList.toggle("tip-left", placeLeft);
     tt.classList.add("show");
   };
   const hide = () => { activeBtn = null; tt.classList.remove("show"); };
@@ -2224,7 +2639,10 @@ document.addEventListener("keydown",e=>{
   window.addEventListener("resize", hide);
 })();
 function onViewActivated(vw){
-  if(vw==="profile") initProfileView();
+  if(vw==="profile"){ initProfileView();
+    // placera REGION-väljarens glidande markör nu när vyn är synlig (kräver mätbar layout)
+    setTimeout(()=>moveProfLevelIndicator(true), 40);
+  }
   else if(vw==="correlate") initCorrelateView();
   else if(vw==="compare"){ initCompareView();
     // placera den glidande markören nu när Jämför län faktiskt är synlig
@@ -2837,10 +3255,10 @@ async function run(){
     renderTable(lastResult);
     // om diagramvyn är aktiv: rita om diagrammet med den nya datan
     if($("#chartView").style.display!=="none") renderChart(window.__P);
-    $("#csvBtn").disabled=false; $("#copyBtn").disabled=false;
+    $("#csvBtn").disabled=false;
   }catch(err){
     showError(err,"Anropet till SCB misslyckades.");
-    $("#csvBtn").disabled=true; $("#copyBtn").disabled=true;
+    $("#csvBtn").disabled=true;
   }
 }
 
@@ -3414,11 +3832,6 @@ $("#csvBtn").addEventListener("click",()=>{
   a.download="scb_overgang_"+(selectedTableIdx)+".csv";
   a.click();
 });
-$("#copyBtn").addEventListener("click",async()=>{
-  try{ await navigator.clipboard.writeText(buildCSV().replace(/;/g,"\t").replace(/^\uFEFF/,""));
-    $("#copyBtn").textContent="Kopierat ✓"; setTimeout(()=>$("#copyBtn").textContent="Kopiera tabell",1500);
-  }catch(e){ alert("Kunde inte kopiera automatiskt."); }
-});
 
 /* Gemensam CSV-export: rows = array av arrayer (första raden = rubriker).
    Semikolon som avgränsare (svensk Excel) + UTF-8 BOM så åäö blir rätt. */
@@ -3522,16 +3935,47 @@ function buildProfileRegionList(){
       $("#profRegionText").textContent=r.name;
       list.querySelectorAll(".tabledd-opt").forEach(o=>o.classList.toggle("selected",o===opt));
       $("#profRegionDd").classList.remove("open");
-      loadProfile();
+      // Konsekvent med övriga vyer: körningen sker först när man klickar på knappen.
+      const runBtn=$("#profRun"); if(runBtn) runBtn.disabled=false;
+      if(!PROFILE_EXPORT || PROFILE_EXPORT.code!==r.code){
+        $("#profileOut").innerHTML = `<div class="placeholder">Klicka "Visa profil" för att hämta profilen för ${r.name}.</div>`;
+      }
     });
   });
 }
 
 let profileLevel = "lan";   // "lan" | "kommun"
+// Glidande markör för REGION-väljaren (Län/Kommuner): flyttas i höjdled till aktiv knapp.
+function moveProfLevelIndicator(instant){
+  const el = document.getElementById("profLevel");
+  if(!el) return;
+  const active = el.querySelector("button.active");
+  if(!active || active.offsetHeight === 0) return;   // hoppa om vyn är dold
+  const ind = el.querySelector(".bs-toggle-indicator");
+  const apply = ()=>{
+    el.style.setProperty("--bt-y", active.offsetTop + "px");
+    el.style.setProperty("--bt-h", active.offsetHeight + "px");
+    el.classList.add("indicator-ready");
+  };
+  if(instant && ind){
+    const prev = ind.style.transition;
+    ind.style.transition = "none";
+    apply();
+    void ind.offsetWidth;
+    ind.style.transition = prev;
+    return;
+  }
+  apply();
+}
 document.querySelectorAll("#profLevel button").forEach(b=>{
   b.addEventListener("click",()=>{
     document.querySelectorAll("#profLevel button").forEach(x=>x.classList.toggle("active",x===b));
     profileLevel=b.dataset.level;
+    moveProfLevelIndicator();
+    // Nivåbytet nollställer regionvalet; bygg om listan och vänta på nytt val + knapptryck.
+    profileSel.code=null; profileSel.name=null;
+    $("#profRegionText").textContent="Välj region…";
+    const runBtn=$("#profRun"); if(runBtn) runBtn.disabled=true;
     buildProfileRegionList();   // bygg om listan för den nya nivån
   });
 });
@@ -3540,7 +3984,17 @@ document.querySelectorAll("#profLevel button").forEach(b=>{
 let profileForm = "total";
 $("#profForm").addEventListener("change",e=>{
   profileForm = e.target.value;
-  if(profileSel.code) loadProfile();
+  // Konsekvent med övriga vyer: ändringen träder i kraft först vid knapptryck.
+  if(profileSel.code){
+    const runBtn=$("#profRun"); if(runBtn) runBtn.disabled=false;
+    $("#profileOut").innerHTML = `<div class="placeholder">Utbildningsform: ${transForm(profileForm).label}. Klicka "Visa profil" för att hämta.</div>`;
+  }
+});
+
+// Körknapp: hämtar profilen (samma mönster som övriga vyer – körningen sker vid klick).
+$("#profRun").addEventListener("click",()=>{
+  if(!profileSel.code) return;
+  loadProfile();
 });
 
 // Profilexport: alla mått (senaste år) + hela övergångstidsserien
@@ -3936,7 +4390,7 @@ async function initCorrelateView(){
     corrSex = e.target.value;
     CORR_CACHE = { xKey:null, yKey:null, xData:null, yData:null };
     fetchMetricAllLan._transPromise = null; fetchMetricAllLan._transKey = null;
-    const sexLbl = corrSex==="1+2" ? "båda könen" : corrSex==="2" ? "kvinnor" : "män";
+    const sexLbl = corrSex==="1+2" ? "totalt" : corrSex==="2" ? "kvinnor" : "män";
     $("#correlateOut").innerHTML = `<div class="placeholder">Kön: ${sexLbl}. Klicka "Visa samband" för att hämta.</div>`;
   });
   // nivåväxel: samtliga län / samtliga kommuner / kommuner i ett län
@@ -4229,7 +4683,7 @@ $("#corrExport").addEventListener("click",()=>{
   if(!points||!points.length) return;
   const xM=METRICS[xKey], yM=METRICS[yKey];
   const lvl = corrLevel==="lan"?"Län":"Kommun";
-  const sexLbl = corrSex==="1+2" ? "Båda" : corrSex==="2" ? "Kvinnor" : "Män";
+  const sexLbl = corrSex==="1+2" ? "Totalt" : corrSex==="2" ? "Kvinnor" : "Män";
   // koppla varje variabelnyckel till SCB-källa
   const srcFor = k => {
     if(k.startsWith("t:")) return "SCB UF0542 (övergångar, " + transForm(corrForm).label + ", " + sexLbl.toLowerCase() + ")";
@@ -4323,7 +4777,7 @@ function renderScatter(points, xKey, yKey, year){
     trendData=[{x:xmin,y:reg.slope*xmin+reg.intercept},{x:xmax,y:reg.slope*xmax+reg.intercept}];
   }
   const lvlWord = corrLevel==="lan" ? "län" : "kommuner";
-  const sexLbl = corrSex==="1+2" ? "båda könen" : corrSex==="2" ? "kvinnor" : "män";
+  const sexLbl = corrSex==="1+2" ? "totalt" : corrSex==="2" ? "kvinnor" : "män";
   const showLabels = points.length <= 40;   // utskrivna namn bara när det inte blir rörigt
   const unit = corrLevel==="lan" ? "län" : "kommun";
   // kontext för urvalet: vid kommuner-i-ett-län namnger vi länet i underrubriken
@@ -4432,8 +4886,11 @@ function moveCmpIndicator(){
   if(!cmpModeEl) return;
   const active = cmpModeEl.querySelector("button.active");
   if(!active || active.offsetWidth === 0) return; // hoppa om vyn är dold (0-bredd)
+  // Stående "slajd": markören flyttas i höjdled (Y/H). Behåll X/W för säkerhets skull.
   cmpModeEl.style.setProperty("--cm-x", active.offsetLeft + "px");
   cmpModeEl.style.setProperty("--cm-w", active.offsetWidth + "px");
+  cmpModeEl.style.setProperty("--cm-y", active.offsetTop + "px");
+  cmpModeEl.style.setProperty("--cm-h", active.offsetHeight + "px");
   cmpModeEl.classList.add("indicator-ready");
 }
 // Växlaren matris / utveckling över tid. Kopplas en gång vid sidladdning,
@@ -4452,6 +4909,10 @@ function moveCmpIndicator(){
       const tp=document.getElementById("cmp-pane-timeseries");
       if(mp) mp.style.display = mode==="matrix" ? "" : "none";
       if(tp) tp.style.display = mode==="timeseries" ? "" : "none";
+      const mo=document.getElementById("cmp-out-matrix");
+      const to=document.getElementById("cmp-out-timeseries");
+      if(mo) mo.style.display = mode==="matrix" ? "" : "none";
+      if(to) to.style.display = mode==="timeseries" ? "" : "none";
     });
   });
 })();
@@ -5224,7 +5685,7 @@ function renderKommunTable(){
     sorted = [...kommuner].sort(cmpByCode);
   }
   // kontextrad: vilka val gav tabellen?
-  const sexLbl = sex==="1+2" ? "båda könen" : sex==="2" ? "kvinnor" : "män";
+  const sexLbl = sex==="1+2" ? "totalt" : sex==="2" ? "kvinnor" : "män";
   const ctxParts = [meta.label];
   if(meta.form) ctxParts.push(transForm(form).label.toLowerCase());
   if(meta.form || varKeyAffectedBySex(KT_LAST.varKey)) ctxParts.push(sexLbl);
@@ -5303,7 +5764,7 @@ $("#ktExport").addEventListener("click",()=>{
     ["Innehåll:", `Tabell över ${lanName==="Riket"?"samtliga kommuner i Sverige":("kommunerna i " + lanName)}, en rad per kommun och en kolumn per år.`],
     ["Variabel:", meta.label],
     meta.form ? ["Utbildningsform:", transForm(form).label] : null,
-    ["Kön:", sex==="1+2"?"Båda":sex==="2"?"Kvinnor":"Män"],
+    ["Kön:", sex==="1+2"?"Totalt":sex==="2"?"Kvinnor":"Män"],
     ["Område:", lanName],
     ["Enhet:", meta.unit==="%"?"procent":"antal"],
     ["Årtolkning:", yearInterp],
@@ -5342,5 +5803,7 @@ window.addEventListener("resize",()=>{
 // Profil: ålder- och könsväljare
 // Profil: regionnivå hanteras via #profLevel (ålder/kön är fasta)
 </script>
+</div><!-- /.rail-content -->
+</div><!-- /#railRow -->
 </body>
 </html>
