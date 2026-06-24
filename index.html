@@ -1671,7 +1671,7 @@
       </div>
       <div class="tabledd" id="profRegionDd">
         <button class="tabledd-btn" id="profRegionBtn" aria-haspopup="listbox" aria-expanded="false">
-          <span id="profRegionText">Välj region…</span>
+          <span id="profRegionText">Välj…</span>
           <span class="tabledd-caret">▾</span>
         </button>
         <div class="tabledd-pop" id="profRegionPop">
@@ -2807,16 +2807,15 @@ document.addEventListener("keydown",e=>{
   window.addEventListener("resize", hide);
 })();
 function onViewActivated(vw){
-  if(vw==="profile"){ initProfileView();
-    // placera REGION-väljarens glidande markör nu när vyn är synlig (kräver mätbar layout)
-    setTimeout(()=>moveProfLevelIndicator(true), 40);
-  }
+  // Placera de stående glidande markörerna direkt när vyn blir synlig.
+  // requestAnimationFrame (dubbel) i stället för setTimeout: layouten är då mätbar
+  // och placeringen sker innan användaren hinner klicka, så pillret aldrig syns
+  // ligga kvar i default-läget (överkant) för att sedan hoppa till rätt knapp.
+  const placeSliders = ()=>{ moveProfLevelIndicator(true); moveCmpIndicator(false); };
+  requestAnimationFrame(()=>{ placeSliders(); requestAnimationFrame(placeSliders); });
+  if(vw==="profile"){ initProfileView(); }
   else if(vw==="correlate") initCorrelateView();
-  else if(vw==="compare"){ initCompareView();
-    // placera den glidande markören nu när Jämför län faktiskt är synlig
-    // (mätning kräver att elementet inte är display:none)
-    setTimeout(moveCmpIndicator, 40);
-  }
+  else if(vw==="compare"){ initCompareView(); }
   else if(vw==="patterns") initCompareView();   // återanvänder regionlistans laddning
   else if(vw==="kommun") initKommunView();
 }
@@ -4216,7 +4215,7 @@ document.querySelectorAll("#profLevel button").forEach(b=>{
     moveProfLevelIndicator();
     // Nivåbytet nollställer regionvalet; bygg om listan och vänta på nytt val + knapptryck.
     profileSel.code=null; profileSel.name=null;
-    $("#profRegionText").textContent="Välj region…";
+    $("#profRegionText").textContent="Välj…";
     const runBtn=$("#profRun"); if(runBtn) runBtn.disabled=true;
     buildProfileRegionList();   // bygg om listan för den nya nivån
   });
@@ -5169,13 +5168,29 @@ function moveCmpIndicator(animate){
   if(!cmpModeEl) return;
   const active = cmpModeEl.querySelector("button.active");
   if(!active || active.offsetWidth === 0) return; // hoppa om vyn är dold (0-bredd)
+  const ind = cmpModeEl.querySelector(".cmp-mode-indicator");
   // Stående "slajd": markören flyttas i höjdled (Y/H). Behåll X/W för säkerhets skull.
-  cmpModeEl.style.setProperty("--cm-x", active.offsetLeft + "px");
-  cmpModeEl.style.setProperty("--cm-w", active.offsetWidth + "px");
-  cmpModeEl.style.setProperty("--cm-y", active.offsetTop + "px");
-  cmpModeEl.style.setProperty("--cm-h", active.offsetHeight + "px");
-  cmpModeEl.classList.add("indicator-ready");
-  if(animate) litFollow(cmpModeEl, ".cmp-mode-indicator"); else litInstant(cmpModeEl);
+  const apply = ()=>{
+    cmpModeEl.style.setProperty("--cm-x", active.offsetLeft + "px");
+    cmpModeEl.style.setProperty("--cm-w", active.offsetWidth + "px");
+    cmpModeEl.style.setProperty("--cm-y", active.offsetTop + "px");
+    cmpModeEl.style.setProperty("--cm-h", active.offsetHeight + "px");
+    cmpModeEl.classList.add("indicator-ready");
+  };
+  // Instant placering (t.ex. när vyn just blivit synlig): stäng av övergången,
+  // sätt läget, tvinga reflow och slå på övergången igen — annars glider pillret
+  // från sitt default-läge (överkant) till rätt knapp och syns som en blink.
+  if(!animate && ind){
+    const prev = ind.style.transition;
+    ind.style.transition = "none";
+    apply();
+    litInstant(cmpModeEl);
+    void ind.offsetWidth;
+    ind.style.transition = prev;
+    return;
+  }
+  apply();
+  if(ind) litFollow(cmpModeEl, ".cmp-mode-indicator"); else litInstant(cmpModeEl);
 }
 // Växlaren matris / utveckling över tid. Kopplas en gång vid sidladdning,
 // oberoende av datainladdningen, så den glidande markören alltid fungerar.
