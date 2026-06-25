@@ -1664,8 +1664,7 @@
   <aside>
     <div class="block">
       <p class="panel-title">Välj nivå</p>
-      <div class="bs-toggle bs-toggle-stack" id="profLevel" style="margin-bottom:10px">
-        <span class="bs-toggle-indicator" aria-hidden="true"></span>
+      <div class="lvl-select lvl-select-stack" id="profLevel" style="margin-bottom:10px">
         <button data-level="lan" class="active">Län</button>
         <button data-level="kommun">Kommuner</button>
       </div>
@@ -1757,8 +1756,7 @@
   <aside>
     <div class="block">
       <p class="panel-title">Välj vy</p>
-      <div class="cmp-mode cmp-mode-stack" id="cmpMode" role="tablist" aria-label="Välj vy i Jämför län">
-        <span class="cmp-mode-indicator" aria-hidden="true"></span>
+      <div class="lvl-select lvl-select-stack" id="cmpMode" role="tablist" aria-label="Välj vy i Jämför län">
         <button data-mode="matrix" class="active" role="tab" aria-selected="true">Länsöversikt</button>
         <button data-mode="timeseries" role="tab" aria-selected="false">Utveckling över tid</button>
       </div>
@@ -1831,10 +1829,10 @@
 <main id="view-patterns" class="view" style="display:none">
   <aside>
     <div class="block">
-      <p class="panel-title">Välj regionnivå</p>
+      <p class="panel-title">Välj nivå</p>
       <select id="patLevel" class="corr-select">
-        <option value="lan" selected>Län (21 st, snabbt)</option>
-        <option value="kommun">Kommuner (290 st, tar längre tid)</option>
+        <option value="lan" selected>Län</option>
+        <option value="kommun">Kommuner (tar längre tid)</option>
       </select>
     </div>
     <div class="block">
@@ -1902,10 +1900,10 @@
 
       <h3 id="m-arbetsmarknad" class="method-h">Arbetsmarknadsmått</h3>
 
-      <p class="method-measure"><b>Sysselsättningsgrad och arbetslöshet</b> <span class="method-tag">SCB-tabell AM0210 (BAS, registerbaserad arbetsmarknadsstatistik)</span></p>
-      <p>Färdiga mått från BAS: sysselsättningsgrad (andel sysselsatta av befolkningen) och arbetslöshet. Visas för två åldersgrupper, 20–64 år (hela den förvärvsaktiva befolkningen) och 20–24 år (unga, närmare övergångskohorten). Båda könen sammanräknade, samtliga födelseregioner.</p>
+      <p class="method-measure"><b>Sysselsättningsgrad och arbetslöshet</b> <span class="method-tag">SCB-tabell AM0210D (BAS, slutlig statistik baserad på årliga uppgifter)</span></p>
+      <p>Färdiga mått från BAS årsregister: sysselsättningsgrad (andel sysselsatta av befolkningen) och arbetslöshet. Årsregistret är en årlig registermätning, till skillnad från BAS månadstabell där årsvärdet är ett medelvärde av tolv månader. Visas för två åldersgrupper, 20–64 år (hela den förvärvsaktiva befolkningen) och 20–24 år (unga, närmare övergångskohorten). Båda könen sammanräknade, samtliga födelseregioner.</p>
 
-      <p class="method-measure"><b>Antal studerande</b> <span class="method-tag">SCB-tabell AM0210 (BAS)</span></p>
+      <p class="method-measure"><b>Antal studerande</b> <span class="method-tag">SCB-tabell AM0210D (BAS årsregister)</span></p>
       <p>Antal personer registrerade som studerande, 20–64 år. Detta är ett absolut antal, inte en andel, vilket bör hållas i åtanke vid jämförelser mellan regioner av olika storlek.</p>
 
       <p class="method-measure"><b>Utbildningsnivå</b> <span class="method-tag">SCB-tabell UF0506 (befolkningens utbildning)</span></p>
@@ -1980,17 +1978,42 @@ const examYear = (lasar) => {
 };
 
 /* =========================================================================
-   BAS — Befolkningens arbetsmarknadsstatus (AM0210), årstabell.
-   Innehåller färdiga mått: sysselsättningsgrad, arbetslöshet, antal studerande m.m.
-   Regionkoder = SCB-standard (01, 0114 …), dvs övergångskoder utan B/G-suffix.
+   BAS — Befolkningens arbetsmarknadsstatus (AM0210).
+   Vi använder den slutliga ÅRSREGISTER-tabellen (AM0210D/ArRegArbStatus),
+   dvs årlig registermätning. Det skiljer sig från den månadsbaserade
+   tabellen (AM0210C), där årsvärdet är ett medelvärde av tolv månader, och
+   ger samma värden som SCB:s årsredovisning av sysselsättningsgrad m.m.
+   Tabellen innehåller färdiga mått: sysselsättningsgrad, arbetslöshet,
+   antal studerande m.m. Regionkoder = SCB-standard (01, 0114 …), dvs
+   övergångskoder utan B/G-suffix.
    ========================================================================= */
-const BAS_PATH = "/START/AM/AM0210/AM0210C/ZArbStatusAr";
-const BAS_CONTENT = {
-  sysselsattningsgrad: "000001PL",
-  arbetsloshet:        "000001PB",
-  studerande:          "000001PK",
-  antal_sysselsatta:   "000001PM"
+const BAS_PATH = "/START/AM/AM0210/AM0210D/ArRegArbStatus";
+// Innehållskoderna (ContentsCode) skiljer sig mellan SCB:s tabeller och kan
+// ändras vid nya årgångar. I stället för att hårdkoda dem slår vi upp dem ur
+// tabellens metadata via måttets svenska etikett. Resolvern cachas.
+const BAS_CONTENT_LABELS = {
+  sysselsattningsgrad: "sysselsättningsgrad",
+  arbetsloshet:        "arbetslöshet",
+  studerande:          "antal studerande"
 };
+let _basContentCodes = null;     // {measure: valuecode} när det väl är upplöst
+async function resolveBasContent(){
+  if(_basContentCodes) return _basContentCodes;
+  const meta = await apiGet(BAS_PATH);
+  const cv = meta.variables.find(v=>/contents/i.test(v.code) || /tabellinnehåll|innehåll/i.test(v.text||""));
+  if(!cv) throw new Error("Hittade inte innehållsvariabeln i BAS-tabellen");
+  const norm = s => (s||"").trim().toLowerCase();
+  const map = {};
+  Object.keys(BAS_CONTENT_LABELS).forEach(measure=>{
+    const want = norm(BAS_CONTENT_LABELS[measure]);
+    // exakt etikettmatchning först, annars måttet som börjar med etiketten
+    let idx = cv.valueTexts.findIndex(t=>norm(t)===want);
+    if(idx<0) idx = cv.valueTexts.findIndex(t=>norm(t).startsWith(want));
+    if(idx>=0) map[measure] = cv.values[idx];
+  });
+  _basContentCodes = map;
+  return map;
+}
 // Översätt övergångsdatans regionkod (01B/0114G) till BAS-kod (01/0114)
 const toBasRegion = code => code.replace(/[BG]$/,"");
 
@@ -2421,8 +2444,9 @@ async function fetchTransitionsMulti({basRegions, sex="1+2", form="total"}){
 
 // Hämta ett BAS-mått. regions = array av BAS-koder. Returnerar {region:{år:värde}}
 async function fetchBAS({measure, regions, age="20-64", sex="1+2"}){
-  const content = BAS_CONTENT[measure];
-  if(!content) throw new Error("Okänt BAS-mått: "+measure);
+  const codes = await resolveBasContent();
+  const content = codes[measure];
+  if(!content) throw new Error("Okänt eller ej upplöst BAS-mått: "+measure);
   const query = [
     {code:"Region",        selection:{filter:"item", values:regions}},
     {code:"Kon",           selection:{filter:"item", values:[sex]}},
@@ -2807,12 +2831,6 @@ document.addEventListener("keydown",e=>{
   window.addEventListener("resize", hide);
 })();
 function onViewActivated(vw){
-  // Placera de stående glidande markörerna direkt när vyn blir synlig.
-  // requestAnimationFrame (dubbel) i stället för setTimeout: layouten är då mätbar
-  // och placeringen sker innan användaren hinner klicka, så pillret aldrig syns
-  // ligga kvar i default-läget (överkant) för att sedan hoppa till rätt knapp.
-  const placeSliders = ()=>{ moveProfLevelIndicator(true); moveCmpIndicator(false); };
-  requestAnimationFrame(()=>{ placeSliders(); requestAnimationFrame(placeSliders); });
   if(vw==="profile"){ initProfileView(); }
   else if(vw==="correlate") initCorrelateView();
   else if(vw==="compare"){ initCompareView(); }
@@ -4212,7 +4230,6 @@ document.querySelectorAll("#profLevel button").forEach(b=>{
   b.addEventListener("click",()=>{
     document.querySelectorAll("#profLevel button").forEach(x=>x.classList.toggle("active",x===b));
     profileLevel=b.dataset.level;
-    moveProfLevelIndicator();
     // Nivåbytet nollställer regionvalet; bygg om listan och vänta på nytt val + knapptryck.
     profileSel.code=null; profileSel.name=null;
     $("#profRegionText").textContent="Välj…";
@@ -4259,16 +4276,16 @@ $("#profExport").addEventListener("click",()=>{
       ["Utbildningsform för övergångar:", transForm(profileForm).label],
       ["Innehåll:", "Senaste tillgängliga värde per arbetsmarknadsmått, samt övergångar till vidare studier som tidsserie över avgångsår."],
       ["Årtolkning:", "Övergångsmått (övergångar 1/3/5/10 år, antal examinerade) använder avgångsår, dvs vårterminens år då kullen tog examen från gymnasieskolan (t.ex. 2019 = läsåret 2018/2019). Arbetsmarknadsmått (sysselsättning, arbetslöshet, utbildningsnivå etc.) använder kalenderår."],
-      ["Källor:", "Övergångar UF0542 · Sysselsättning/arbetslöshet AM0210 · Utbildningsnivå UF0506 · Yrkesregister AM0208 · BRP NR0105 · Tjänstesektor AM0210F · Högskoleförberedande UF0542A"]
+      ["Källor:", "Övergångar UF0542 · Sysselsättning/arbetslöshet AM0210D · Utbildningsnivå UF0506 · Yrkesregister AM0208 · BRP NR0105 · Tjänstesektor AM0210F · Högskoleförberedande UF0542A"]
     ])
   ];
   rows.push(["Mått","Värde","År","Enhet","Register","SCB-tabell"]);
   const m=(label,obj,unit,reg,tab)=>{ const {yr,v}=latest(obj); const isShareUnit = unit==="%"; rows.push([label, isShareUnit?numShare(v):(unit==="antal"||unit==="tkr"?numCount(v):csvNum(v)), yr, isShareUnit?"andel (0–1)":unit, reg||"", tab||""]); };
-  m("Sysselsättning 20–64 år", P.syss64, "%", "BAS", "AM0210");
-  m("Sysselsättning 20–24 år", P.syss24, "%", "BAS", "AM0210");
-  m("Arbetslöshet 20–64 år", P.arbl64, "%", "BAS", "AM0210");
-  m("Arbetslöshet 20–24 år", P.arbl24, "%", "BAS", "AM0210");
-  m("Antal studerande 20–64 år", P.stud, "antal", "BAS", "AM0210");
+  m("Sysselsättning 20–64 år", P.syss64, "%", "BAS", "AM0210D");
+  m("Sysselsättning 20–24 år", P.syss24, "%", "BAS", "AM0210D");
+  m("Arbetslöshet 20–64 år", P.arbl64, "%", "BAS", "AM0210D");
+  m("Arbetslöshet 20–24 år", P.arbl24, "%", "BAS", "AM0210D");
+  m("Antal studerande 20–64 år", P.stud, "antal", "BAS", "AM0210D");
   m("Högskoleförberedande gymnasieprogram (andel av examinerade)", P.hogforb, "%", "Övergångsregistret", "UF0542A");
   m("Utbildningsnivå (eftergymn. 3 år+, 25–65)", P.utb, "%", "Utbildningsregistret", "UF0506");
   m("Jobb som kräver högskoleutbildning (SSYK 2+3)", P.hog, "%", "Yrkesregistret", "AM0208");
@@ -4780,9 +4797,9 @@ let CORR_CACHE = { xKey:null, yKey:null, xData:null, yData:null };
 
 // Metric-katalog: varje val → async hämtare som ger {länskod: värde} för valt år
 const METRICS = {
-  "b:sysselsattningsgrad": {label:"Sysselsättningsgrad (%)", unit:"%", reg:"BAS", regFull:"BAS – registerbaserad arbetsmarknadsstatistik (SCB AM0210)"},
-  "b:arbetsloshet":        {label:"Arbetslöshet (%)", unit:"%", reg:"BAS", regFull:"BAS – registerbaserad arbetsmarknadsstatistik (SCB AM0210)"},
-  "b:studerande":          {label:"Antal studerande", unit:"", reg:"BAS", regFull:"BAS – registerbaserad arbetsmarknadsstatistik (SCB AM0210)"},
+  "b:sysselsattningsgrad": {label:"Sysselsättningsgrad (%)", unit:"%", reg:"BAS", regFull:"BAS årsregister – slutlig statistik baserad på årliga uppgifter (SCB AM0210D)"},
+  "b:arbetsloshet":        {label:"Arbetslöshet (%)", unit:"%", reg:"BAS", regFull:"BAS årsregister – slutlig statistik baserad på årliga uppgifter (SCB AM0210D)"},
+  "b:studerande":          {label:"Antal studerande", unit:"", reg:"BAS", regFull:"BAS årsregister – slutlig statistik baserad på årliga uppgifter (SCB AM0210D)"},
   "m:utb":                 {label:"Utbildningsnivå, eftergymn. 3 år+ (%)", unit:"%", reg:"Utbildningsregistret", regFull:"Befolkningens utbildning (SCB UF0506)"},
   "m:hog":                 {label:"Jobb som kräver högskoleutbildning (%)", unit:"%", reg:"Yrkesregistret", regFull:"Yrkesregistret, YREG56BAS (SCB AM0208)"},
   "m:hoglag":              {label:"Jobb utan krav på högskoleutbildning (%)", unit:"%", reg:"Yrkesregistret", regFull:"Yrkesregistret, YREG56BAS (SCB AM0208)"},
@@ -4965,7 +4982,7 @@ $("#corrExport").addEventListener("click",()=>{
   // koppla varje variabelnyckel till SCB-källa
   const srcFor = k => {
     if(k.startsWith("t:")) return "SCB UF0542 (övergångar, " + transForm(corrForm).label + ", " + sexLbl.toLowerCase() + ")";
-    if(k.startsWith("b:")) return "SCB AM0210 (sysselsättning/arbetslöshet/studerande, 20–64 år, " + sexLbl.toLowerCase() + ")";
+    if(k.startsWith("b:")) return "SCB AM0210D (sysselsättning/arbetslöshet/studerande, 20–64 år, " + sexLbl.toLowerCase() + ")";
     if(k==="m:utb") return "SCB UF0506 (utbildningsnivå, 25–65 år, " + sexLbl.toLowerCase() + ")";
     if(k==="m:hog") return "SCB AM0208 (yrkesregister, SSYK 2+3, ej könsuppdelad)";
     if(k==="m:hoglag") return "SCB AM0208 (yrkesregister, SSYK 4–9, ej könsuppdelad)";
@@ -5202,7 +5219,6 @@ function moveCmpIndicator(animate){
         x.classList.toggle("active",on);
         x.setAttribute("aria-selected", on?"true":"false");
       });
-      moveCmpIndicator(true);
       const mode=b.dataset.mode;
       const mp=document.getElementById("cmp-pane-matrix");
       const tp=document.getElementById("cmp-pane-timeseries");
@@ -5288,7 +5304,7 @@ $("#cmpExport").addEventListener("click",()=>{
     ["Innehåll:", "Översiktsmatris över Sveriges 21 län. Varje rad är ett län; varje kolumn ett mått (senaste tillgängliga år). Kolumnerna för år anger vilket år värdet avser per län."],
     ["Utbildningsform för övergångar:", transForm(cmpForm).label],
     ["Årtolkning:", "Övergångsmått (övergångar 1/3/5/10 år, högskoleförberedande gymnasieprogram) använder avgångsår, dvs vårterminens år då kullen tog examen (t.ex. 2019 = läsåret 2018/2019). Arbetsmarknadsmått, BRP och tjänstesektor använder kalenderår."],
-    ["Källor:", "Övergångar UF0542 · Sysselsättning/arbetslöshet/studerande AM0210 · Utbildningsnivå UF0506 · Yrkesregister AM0208 (SSYK 2+3 och 4–9) · Högskoleförberedande UF0542A · BRP NR0105 · Tjänstesektor AM0210F"],
+    ["Källor:", "Övergångar UF0542 · Sysselsättning/arbetslöshet/studerande AM0210D · Utbildningsnivå UF0506 · Yrkesregister AM0208 (SSYK 2+3 och 4–9) · Högskoleförberedande UF0542A · BRP NR0105 · Tjänstesektor AM0210F"],
     ["Notera:", "Andelar anges som värde mellan 0 och 1 (markerade [0–1] i kolumnrubriken); BRP i tkr per invånare; studerande som antal."]
   ]);
   const cmpIsShare = key => (METRICS[key]?.unit === "%");
@@ -5851,7 +5867,7 @@ $("#patExport").addEventListener("click",()=>{
     ["Regionnivå:", PAT_RESULT.level==="lan" ? "Län (21 observationer per korrelation)" : "Kommuner (upp till 290 observationer per korrelation)"],
     ["Uppföljningstid:", horizonTxt.charAt(0).toUpperCase()+horizonTxt.slice(1)],
     ["Statistisk prövning:", "Säkerställt avser 5 %-nivån (tvåsidigt t-test). Med många test förväntas några skenbart säkerställda samband av slump."],
-    ["Källor:", "Övergångar UF0542 · Sysselsättning/arbetslöshet AM0210 · Utbildningsnivå UF0506 · Yrkesregister AM0208 · Högskoleförberedande UF0542A · BRP NR0105 · Tjänstesektor AM0210F"],
+    ["Källor:", "Övergångar UF0542 · Sysselsättning/arbetslöshet AM0210D · Utbildningsnivå UF0506 · Yrkesregister AM0208 · Högskoleförberedande UF0542A · BRP NR0105 · Tjänstesektor AM0210F"],
     ["Årtolkning:", "Övergångsmått använder avgångsår, dvs vårterminens år då kullen tog examen från gymnasieskolan (t.ex. 2019 = läsåret 2018/2019). Arbetsmarknadsmått använder kalenderår. Avgångsår och måttår redovisas i separata kolumner per rad."],
     ["Notera:", "Korrelationer mäter samvariation i ett tvärsnitt, inte orsakssamband. Övergångarna avser senaste avgångsår med tillräckligt underlag; arbetsmarknadsmåtten senaste tillgängliga år. I könsfördjupningen är övergångsmåttet könsspecifikt; arbetsmarknadsmåtten redovisas dock alltid som totalvärden."]
   ]);
